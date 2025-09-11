@@ -20,7 +20,7 @@ import { PostResults } from './PostResults';
 import { SocialIcon } from './SocialIcon';
 
 const platformOptions = [
-  { value: 'X', label: 'X', icon: <SocialIcon platform="X" className="h-5 w-5" /> },
+  { value: 'X', label: 'Twitter', icon: <SocialIcon platform="X" className="h-5 w-5" /> },
   { value: 'LinkedIn', label: 'LinkedIn', icon: <Linkedin className="h-5 w-5" /> },
   { value: 'Instagram', label: 'Instagram', icon: <Instagram className="h-5 w-5" /> },
   { value: 'Facebook', label: 'Facebook', icon: <Facebook className="h-5 w-5" /> },
