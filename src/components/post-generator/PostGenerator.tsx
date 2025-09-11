@@ -15,11 +15,12 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Twitter, Linkedin, Instagram, Facebook } from 'lucide-react';
+import { Loader2, Linkedin, Instagram, Facebook } from 'lucide-react';
 import { PostResults } from './PostResults';
+import { SocialIcon } from './SocialIcon';
 
 const platformOptions = [
-  { value: 'X', label: 'X', icon: <Twitter className="h-5 w-5" /> },
+  { value: 'X', label: 'X', icon: <SocialIcon platform="X" className="h-5 w-5" /> },
   { value: 'LinkedIn', label: 'LinkedIn', icon: <Linkedin className="h-5 w-5" /> },
   { value: 'Instagram', label: 'Instagram', icon: <Instagram className="h-5 w-5" /> },
   { value: 'Facebook', label: 'Facebook', icon: <Facebook className="h-5 w-5" /> },
