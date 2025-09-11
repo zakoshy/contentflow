@@ -6,7 +6,7 @@ export function Header() {
       <div className="container mx-auto flex items-center gap-3">
         <MessageSquareQuote className="h-8 w-8 text-primary" />
         <h1 className="text-2xl font-bold font-headline text-foreground">
-          ContentSphere AI
+          ContentFlow AI
         </h1>
       </div>
     </header>

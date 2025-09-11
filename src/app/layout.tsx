@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'ContentSphere AI',
+  title: 'ContentFlow AI',
   description: 'Generate engaging, professional, and audience-relevant social media posts with AI.',
 };
 
