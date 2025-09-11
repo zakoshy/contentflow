@@ -8,6 +8,12 @@ import { generatePostsAction, type FormState } from '@/app/actions';
 import { formSchema, type FormSchema } from '@/lib/schema';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,6 +48,12 @@ export function PostGenerator() {
       topics: '',
       platform: 'Twitter',
       numberOfPosts: 3,
+      likes: undefined,
+      comments: undefined,
+      shares: undefined,
+      clicks: undefined,
+      impressions: undefined,
+      date_posted: undefined,
     },
   });
 
@@ -63,7 +75,9 @@ export function PostGenerator() {
   const onSubmit = form.handleSubmit((data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, String(value));
+      if (value !== undefined && value !== '') {
+        formData.append(key, String(value));
+      }
     });
     startTransition(() => {
       setShowResults(false);
@@ -163,6 +177,58 @@ export function PostGenerator() {
                     </FormItem>
                   )}
                 />
+
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="item-1">
+                    <AccordionTrigger>
+                      <FormLabel>Optional: Add Analytics</FormLabel>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      <FormField control={form.control} name="likes" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Likes</FormLabel>
+                          <FormControl><Input type="number" placeholder="120" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="comments" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Comments</FormLabel>
+                          <FormControl><Input type="number" placeholder="15" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="shares" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Shares</FormLabel>
+                          <FormControl><Input type="number" placeholder="8" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="clicks" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Clicks</FormLabel>
+                          <FormControl><Input type="number" placeholder="40" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="impressions" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Impressions / Reach</FormLabel>
+                          <FormControl><Input type="number" placeholder="2000" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="date_posted" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Date Posted</FormLabel>
+                          <FormControl><Input type="date" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
 
                 <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isPending}>
                   {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}

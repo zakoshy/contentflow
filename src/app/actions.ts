@@ -23,6 +23,12 @@ export async function generatePostsAction(
       topics: formData.get('topics'),
       platform: formData.get('platform'),
       numberOfPosts: formData.get('numberOfPosts'),
+      likes: formData.get('likes') || undefined,
+      comments: formData.get('comments') || undefined,
+      shares: formData.get('shares') || undefined,
+      clicks: formData.get('clicks') || undefined,
+      impressions: formData.get('impressions') || undefined,
+      date_posted: formData.get('date_posted') || undefined,
     });
 
     if (!validatedFields.success) {
