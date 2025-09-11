@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useTransition } from 'react';
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generatePostsAction, type FormState } from '@/app/actions';
@@ -30,7 +30,7 @@ const initialState: FormState = {
 };
 
 export function PostGenerator() {
-  const [formState, formAction] = useFormState(generatePostsAction, initialState);
+  const [formState, formAction] = useActionState(generatePostsAction, initialState);
   const [isPending, startTransition] = useTransition();
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
