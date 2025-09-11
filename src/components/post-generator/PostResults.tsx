@@ -77,48 +77,6 @@ export function PostResults({ data }: PostResultsProps) {
                     </Badge>
                   ))}
                 </div>
-                 {post.analytics_summary && (
-                  <>
-                    <Separator className="my-4" />
-                    <div className="space-y-4">
-                        <div>
-                            <h4 className="font-semibold text-sm flex items-center gap-2 mb-2">
-                                <BarChart className="h-4 w-4 text-primary" />
-                                Analytics Summary
-                            </h4>
-                            <p className="text-sm text-muted-foreground">{post.analytics_summary}</p>
-                        </div>
-
-                        {post.highlights && post.highlights.length > 0 && (
-                            <div>
-                                <h4 className="font-semibold text-sm flex items-center gap-2 mb-2">
-                                    <Award className="h-4 w-4 text-primary" />
-                                    Highlights
-                                </h4>
-                                <div className="flex flex-wrap gap-2">
-                                    {post.highlights.map((highlight, i) => (
-                                        <Badge key={i} variant="outline">{highlight}</Badge>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {post.recommendations && post.recommendations.length > 0 && (
-                            <div>
-                                <h4 className="font-semibold text-sm flex items-center gap-2 mb-2">
-                                    <CheckCircle2 className="h-4 w-4 text-primary" />
-                                    Recommendations
-                                </h4>
-                                <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                                    {post.recommendations.map((rec, i) => (
-                                        <li key={i}>{rec}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                  </>
-                )}
               </div>
               <div className="relative aspect-video md:aspect-auto bg-muted">
                 <Image

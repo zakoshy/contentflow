@@ -15,7 +15,7 @@ const GenerateSocialMediaPostsInputSchema = z.object({
   organizationName: z.string().describe('The name of the organization.'),
   topics: z.array(z.string()).describe('A list of topics or keywords related to the organization.'),
   platform: z
-    .enum(['Twitter', 'LinkedIn', 'Instagram', 'Facebook'])
+    .enum(['X', 'LinkedIn', 'Instagram', 'Facebook'])
     .describe('The social media platform for the posts.'),
   numberOfPosts: z.number().int().min(1).describe('The number of posts to generate.'),
   likes: z.number().optional().describe('Number of likes for analytics.'),
@@ -90,6 +90,7 @@ Your task has two phases:
 Generate {{numberOfPosts}} social media posts for {{organizationName}} on {{platform}}.
 Topics include: {{#each topics}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
 Follow the rules and output the JSON format. If analytics data is provided, perform Phase 2.
+If analytics data is not provided, only perform Phase 1.
 `,
 });
 
