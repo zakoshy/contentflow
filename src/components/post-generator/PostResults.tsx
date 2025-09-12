@@ -84,12 +84,13 @@ export function PostResults({ data }: PostResultsProps) {
                     Send to Buffer
                   </Button>
                 </div>
-                <div className="relative aspect-video md:aspect-auto bg-muted">
+                <div className="relative bg-muted">
                   <Image
                     src={`https://source.unsplash.com/600x400/?${encodeURIComponent(imageHint)}&sig=${index}`}
                     alt={post.image_idea}
-                    fill
-                    className="object-cover"
+                    width={600}
+                    height={400}
+                    className="object-cover w-full h-full"
                     data-ai-hint={imageHint}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col justify-end">
