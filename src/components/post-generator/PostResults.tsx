@@ -86,7 +86,7 @@ export function PostResults({ data }: PostResultsProps) {
                 </div>
                 <div className="relative aspect-video md:aspect-auto bg-muted">
                   <Image
-                    src={`https://picsum.photos/seed/${index + 1}/600/400`}
+                    src={`https://source.unsplash.com/600x400/?${encodeURIComponent(imageHint)}&sig=${index}`}
                     alt={post.image_idea}
                     fill
                     className="object-cover"
