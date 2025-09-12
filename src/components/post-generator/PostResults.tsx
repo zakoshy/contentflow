@@ -16,14 +16,6 @@ interface PostResultsProps {
 }
 
 export function PostResults({ data }: PostResultsProps) {
-    const [imageSeeds, setImageSeeds] = React.useState<number[]>([]);
-
-    React.useEffect(() => {
-        if(data?.posts) {
-            setImageSeeds(data.posts.map(() => Math.random()));
-        }
-    }, [data]);
-
   if (!data) {
     return (
         <div className="flex flex-col items-center justify-center h-full min-h-[60vh] rounded-lg border border-dashed shadow-sm bg-card">
@@ -44,7 +36,7 @@ export function PostResults({ data }: PostResultsProps) {
     link.click();
   };
   
-  const getHint = (idea: string) => idea.split(' ').slice(0, 2).join(' ');
+  const getHint = (idea: string) => idea.split(' ').slice(0, 2).join(',');
 
   const handleSendToBuffer = (postText: string) => {
     // TODO: Implement the actual call to the Buffer API
@@ -71,43 +63,45 @@ export function PostResults({ data }: PostResultsProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {data.posts.map((post, index) => (
-          <Card key={index} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-3">
-              <div className="md:col-span-2 p-6 flex flex-col">
-                <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {post.hashtags.map((tag) => (
-                    <Badge key={tag} variant="secondary">
-                      {tag}
-                    </Badge>
-                  ))}
+        {data.posts.map((post, index) => {
+          const imageHint = getHint(post.image_idea);
+          return (
+            <Card key={index} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
+              <div className="grid grid-cols-1 md:grid-cols-3">
+                <div className="md:col-span-2 p-6 flex flex-col">
+                  <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {post.hashtags.map((tag) => (
+                      <Badge key={tag} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                  <Button variant="outline" size="sm" className="mt-auto w-fit" onClick={() => handleSendToBuffer(post.text)}>
+                    <Send className="mr-2 h-4 w-4" />
+                    Send to Buffer
+                  </Button>
                 </div>
-                 <Button variant="outline" size="sm" className="mt-auto w-fit" onClick={() => handleSendToBuffer(post.text)}>
-                  <Send className="mr-2 h-4 w-4" />
-                  Send to Buffer
-                </Button>
-              </div>
-              <div className="relative aspect-video md:aspect-auto bg-muted">
-                <Image
-                  src={`https://picsum.photos/seed/${imageSeeds[index] || index}/600/400`}
-                  alt={post.image_idea}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={getHint(post.image_idea)}
-                />
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col justify-end">
-                  <div className="flex items-start gap-2 text-primary-foreground/90">
-                    <Lightbulb className="h-5 w-5 shrink-0 mt-0.5 text-yellow-300" />
-                    <p className="text-sm font-medium">{post.image_idea}</p>
+                <div className="relative aspect-video md:aspect-auto bg-muted">
+                  <Image
+                    src={`https://source.unsplash.com/600x400/?${imageHint}&sig=${index}`}
+                    alt={post.image_idea}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={imageHint.replace(',', ' ')}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col justify-end">
+                    <div className="flex items-start gap-2 text-primary-foreground/90">
+                      <Lightbulb className="h-5 w-5 shrink-0 mt-0.5 text-yellow-300" />
+                      <p className="text-sm font-medium">{post.image_idea}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          )
+        })}
       </CardContent>
     </Card>
   );
 }
-
