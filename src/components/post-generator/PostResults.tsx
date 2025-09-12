@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { GenerateSocialMediaPostsOutput } from '@/ai/flows/generate-social-media-posts';
@@ -5,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Lightbulb, BotMessageSquare, BarChart, CheckCircle2, Award } from 'lucide-react';
+import { Download, Lightbulb, BotMessageSquare, Send } from 'lucide-react';
 import Image from 'next/image';
 import { SocialIcon } from './SocialIcon';
 import React from 'react';
@@ -45,6 +46,11 @@ export function PostResults({ data }: PostResultsProps) {
   
   const getHint = (idea: string) => idea.split(' ').slice(0, 2).join(' ');
 
+  const handleSendToBuffer = (postText: string) => {
+    // TODO: Implement the actual call to the Buffer API
+    alert(`Sending to Buffer (not yet implemented):\n\n${postText}`);
+  }
+
   return (
     <Card className="animate-in fade-in duration-500">
       <CardHeader>
@@ -70,13 +76,17 @@ export function PostResults({ data }: PostResultsProps) {
             <div className="grid grid-cols-1 md:grid-cols-3">
               <div className="md:col-span-2 p-6 flex flex-col">
                 <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {post.hashtags.map((tag) => (
                     <Badge key={tag} variant="secondary">
                       {tag}
                     </Badge>
                   ))}
                 </div>
+                 <Button variant="outline" size="sm" className="mt-auto w-fit" onClick={() => handleSendToBuffer(post.text)}>
+                  <Send className="mr-2 h-4 w-4" />
+                  Send to Buffer
+                </Button>
               </div>
               <div className="relative aspect-video md:aspect-auto bg-muted">
                 <Image
@@ -100,3 +110,4 @@ export function PostResults({ data }: PostResultsProps) {
     </Card>
   );
 }
+
