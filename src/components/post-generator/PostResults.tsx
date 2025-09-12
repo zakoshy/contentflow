@@ -36,7 +36,7 @@ export function PostResults({ data }: PostResultsProps) {
     link.click();
   };
   
-  const getHint = (idea: string) => idea.split(' ').slice(0, 2).join(',');
+  const getHint = (idea: string) => idea.split(' ').slice(0, 2).join('+');
 
   const handleSendToBuffer = (postText: string) => {
     // TODO: Implement the actual call to the Buffer API
@@ -88,7 +88,7 @@ export function PostResults({ data }: PostResultsProps) {
                     alt={post.image_idea}
                     fill
                     className="object-cover"
-                    data-ai-hint={imageHint.replace(',', ' ')}
+                    data-ai-hint={imageHint.replace('+', ' ')}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col justify-end">
                     <div className="flex items-start gap-2 text-primary-foreground/90">
