@@ -37,8 +37,7 @@ export function PostResults({ data }: PostResultsProps) {
   };
   
   const getHint = (idea: string) => {
-    const hint = idea.split(' ').slice(0, 2).join(' ');
-    return encodeURIComponent(hint);
+    return idea.split(' ').slice(0, 2).join(' ');
   }
 
   const handleSendToBuffer = (postText: string) => {
@@ -87,10 +86,11 @@ export function PostResults({ data }: PostResultsProps) {
                 </div>
                 <div className="relative aspect-video md:aspect-auto bg-muted">
                   <Image
-                    src={`https://source.unsplash.com/600x400/?${imageHint}&sig=${index}`}
+                    src={`https://picsum.photos/seed/${index + 1}/600/400`}
                     alt={post.image_idea}
                     fill
                     className="object-cover"
+                    data-ai-hint={imageHint}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col justify-end">
                     <div className="flex items-start gap-2 text-primary-foreground/90">
