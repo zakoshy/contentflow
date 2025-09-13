@@ -25,6 +25,7 @@ const platformOptions = [
   { value: 'LinkedIn', label: 'LinkedIn', icon: <Linkedin className="h-5 w-5" /> },
   { value: 'Instagram', label: 'Instagram', icon: <Instagram className="h-5 w-5" /> },
   { value: 'Facebook', label: 'Facebook', icon: <Facebook className="h-5 w-5" /> },
+  { value: 'TikTok', label: 'TikTok', icon: <SocialIcon platform="TikTok" className="h-5 w-5" /> },
 ] as const;
 
 const initialState: FormState = {
@@ -131,7 +132,7 @@ export function PostGenerator() {
                           <RadioGroup
                             onValueChange={field.onChange}
                             defaultValue={field.value}
-                            className="grid grid-cols-2 gap-4"
+                            className="grid grid-cols-2 lg:grid-cols-3 gap-4"
                           >
                             {platformOptions.map((option) => (
                               <FormItem key={option.value} className="flex items-center space-x-2">

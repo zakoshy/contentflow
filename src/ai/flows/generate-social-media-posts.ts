@@ -15,7 +15,7 @@ const GenerateSocialMediaPostsInputSchema = z.object({
   organizationName: z.string().describe('The name of the organization.'),
   topics: z.array(z.string()).describe('A list of topics or keywords related to the organization.'),
   platform: z
-    .enum(['X', 'LinkedIn', 'Instagram', 'Facebook'])
+    .enum(['X', 'LinkedIn', 'Instagram', 'Facebook', 'TikTok'])
     .describe('The social media platform for the posts.'),
   numberOfPosts: z.number().int().min(1).describe('The number of posts to generate.'),
   postText: z.string().optional().describe('The text of a specific post to be analyzed.'),
@@ -65,7 +65,7 @@ Your task has two phases:
 If no specific post text is provided for analysis, your primary task is to generate new posts.
 1. Generate engaging, professional, audience-relevant social media posts.
 2. Align posts with the organization’s mission and tone.
-3. Keep posts short: max 280 characters for X, up to 200 words for LinkedIn/Instagram/Facebook.
+3. Keep posts short: max 280 characters for X, up to 200 words for LinkedIn/Instagram/Facebook. For TikTok, keep it even shorter and use a more casual, trending-aware tone.
 4. Include 2–5 relevant hashtags per post.
 5. Suggest an image idea for each post.
 
