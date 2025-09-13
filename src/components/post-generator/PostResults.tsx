@@ -107,7 +107,7 @@ export function PostResults({ data }: PostResultsProps) {
                   </div>
                   <SendToBufferButton postText={post.text} />
                 </div>
-                <div className="relative bg-muted">
+                <div className="relative bg-muted min-h-[200px]">
                   <Image
                     src={imageUrl}
                     alt={post.image_idea}
@@ -116,12 +116,6 @@ export function PostResults({ data }: PostResultsProps) {
                     className="object-cover w-full h-full"
                     data-ai-hint={imageHint}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col justify-end">
-                    <div className="flex items-start gap-2 text-primary-foreground/90">
-                      <Lightbulb className="h-5 w-5 shrink-0 mt-0.5 text-yellow-300" />
-                      <p className="text-sm font-medium">{post.image_idea}</p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </Card>
