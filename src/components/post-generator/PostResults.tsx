@@ -6,10 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Lightbulb, BotMessageSquare, Send, Loader2 } from 'lucide-react';
+import { Download, Lightbulb, BotMessageSquare, Send, Loader2, Upload } from 'lucide-react';
 import Image from 'next/image';
 import { SocialIcon } from './SocialIcon';
-import React from 'react';
+import React, { useState } from 'react';
 import { useActionState, useTransition } from 'react';
 import { sendToBuffer, type SendToBufferState } from '@/app/buffer-actions';
 import { useToast } from '@/hooks/use-toast';
@@ -44,6 +44,51 @@ const SendToBufferButton = ({ postText }: { postText: string }) => {
   );
 };
 
+const ImageUploader = ({ imageIdea }: { imageIdea: string }) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="relative bg-muted min-h-[200px] flex items-center justify-center p-4">
+      {imagePreview ? (
+        <Image
+          src={imagePreview}
+          alt="Uploaded image preview"
+          fill
+          className="object-cover w-full h-full"
+        />
+      ) : (
+        <div className="text-center">
+          <label htmlFor="file-upload" className="cursor-pointer">
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <Lightbulb className="h-8 w-8" />
+              <span className="font-semibold">AI Image Idea:</span>
+              <p className="text-sm text-center mb-2">&quot;{imageIdea}&quot;</p>
+              <Button asChild variant="outline">
+                <div>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload Image
+                </div>
+              </Button>
+            </div>
+            <input id="file-upload" name="file-upload" type="file" className="sr-only" accept="image/*" onChange={handleFileChange} />
+          </label>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export function PostResults({ data }: PostResultsProps) {
   if (!data) {
     return (
@@ -65,10 +110,6 @@ export function PostResults({ data }: PostResultsProps) {
     link.click();
   };
   
-  const getHint = (idea: string) => {
-    return idea.split(' ').slice(0, 2).join(' ');
-  }
-
   return (
     <Card className="animate-in fade-in duration-500">
       <CardHeader>
@@ -90,9 +131,6 @@ export function PostResults({ data }: PostResultsProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         {data.posts.map((post, index) => {
-          const imageHint = getHint(post.image_idea);
-          const imageSeed = imageHint.split(' ')[0] || 'post';
-          const imageUrl = `https://picsum.photos/seed/${imageSeed}-${index}/600/400`;
           return (
             <Card key={index} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-3">
@@ -107,16 +145,7 @@ export function PostResults({ data }: PostResultsProps) {
                   </div>
                   <SendToBufferButton postText={post.text} />
                 </div>
-                <div className="relative bg-muted min-h-[200px]">
-                  <Image
-                    src={imageUrl}
-                    alt={post.image_idea}
-                    width={600}
-                    height={400}
-                    className="object-cover w-full h-full"
-                    data-ai-hint={imageHint}
-                  />
-                </div>
+                <ImageUploader imageIdea={post.image_idea} />
               </div>
             </Card>
           )
