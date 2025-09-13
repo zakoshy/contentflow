@@ -25,18 +25,11 @@ function TikTokLogo({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 2859 3333"
-      shapeRendering="geometricPrecision"
-      textRendering="geometricPrecision"
-      imageRendering="optimizeQuality"
-      fillRule="evenodd"
-      clipRule="evenodd"
+      viewBox="0 0 448 512"
+      fill="currentColor"
       className={className}
     >
-      <path
-        d="M2081 0c55 473-162 901-522 1080-350 174-736 148-1044-69-23-16-43-34-63-53v890c0 1021 1141 1461 1769 423 35-59 66-121 92-186 113 103 241 183 382 235v-654c-142-49-270-129-382-235a1334 1334 0 01-92 186c-590 953-1628 535-1628-423v-890c299 173 661 200 986 72 316-124 585-412 683-784 12-46 23-93 33-140h654z"
-        fill="currentColor"
-      />
+        <path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
     </svg>
   );
 }
