@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState, useTransition } from 'react';
@@ -115,6 +116,11 @@ export function PostGenerator() {
                     )}
                   />
 
+                  <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isPending}>
+                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    Generate Posts
+                  </Button>
+
                   <FormField
                     control={form.control}
                     name="platform"
@@ -168,10 +174,6 @@ export function PostGenerator() {
                     )}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isPending}>
-                  {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                  Generate Posts
-                </Button>
               </form>
             </Form>
           </CardContent>
