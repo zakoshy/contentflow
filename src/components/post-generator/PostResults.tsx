@@ -107,11 +107,12 @@ export function PostResults({ data }: PostResultsProps) {
                 </div>
                 <div className="relative bg-muted">
                   <Image
-                    src={`https://source.unsplash.com/600x400/?${encodeURIComponent(imageHint)}&sig=${index}`}
+                    src={`https://picsum.photos/seed/${index + 1}/600/400`}
                     alt={post.image_idea}
                     width={600}
                     height={400}
                     className="object-cover w-full h-full"
+                    data-ai-hint={imageHint}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col justify-end">
                     <div className="flex items-start gap-2 text-primary-foreground/90">
