@@ -91,6 +91,7 @@ export function PostResults({ data }: PostResultsProps) {
       <CardContent className="space-y-6">
         {data.posts.map((post, index) => {
           const imageHint = getHint(post.image_idea);
+          const imageUrl = `https://source.unsplash.com/600x400/?${encodeURIComponent(imageHint)}`;
           return (
             <Card key={index} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-3">
@@ -107,7 +108,7 @@ export function PostResults({ data }: PostResultsProps) {
                 </div>
                 <div className="relative bg-muted">
                   <Image
-                    src={`https://picsum.photos/seed/${index + 1}/600/400`}
+                    src={imageUrl}
                     alt={post.image_idea}
                     width={600}
                     height={400}
