@@ -6,14 +6,43 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Lightbulb, BotMessageSquare, Send } from 'lucide-react';
+import { Download, Lightbulb, BotMessageSquare, Send, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { SocialIcon } from './SocialIcon';
 import React from 'react';
+import { useActionState, useTransition } from 'react';
+import { sendToBuffer, type SendToBufferState } from '@/app/buffer-actions';
+import { useToast } from '@/hooks/use-toast';
 
 interface PostResultsProps {
   data?: GenerateSocialMediaPostsOutput;
 }
+
+const SendToBufferButton = ({ postText }: { postText: string }) => {
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+
+  const handleSend = async () => {
+    const formData = new FormData();
+    formData.append('text', postText);
+    
+    startTransition(async () => {
+      const result = await sendToBuffer({ message: '' }, formData);
+      toast({
+        title: result.error ? 'Error' : 'Success',
+        description: result.message,
+        variant: result.error ? 'destructive' : 'default',
+      });
+    });
+  };
+
+  return (
+    <Button variant="outline" size="sm" className="mt-auto w-fit" onClick={handleSend} disabled={isPending}>
+      {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
+      Send to Buffer
+    </Button>
+  );
+};
 
 export function PostResults({ data }: PostResultsProps) {
   if (!data) {
@@ -38,11 +67,6 @@ export function PostResults({ data }: PostResultsProps) {
   
   const getHint = (idea: string) => {
     return idea.split(' ').slice(0, 2).join(' ');
-  }
-
-  const handleSendToBuffer = (postText: string) => {
-    // TODO: Implement the actual call to the Buffer API
-    alert(`Sending to Buffer (not yet implemented):\n\n${postText}`);
   }
 
   return (
@@ -79,10 +103,7 @@ export function PostResults({ data }: PostResultsProps) {
                       </Badge>
                     ))}
                   </div>
-                  <Button variant="outline" size="sm" className="mt-auto w-fit" onClick={() => handleSendToBuffer(post.text)}>
-                    <Send className="mr-2 h-4 w-4" />
-                    Send to Buffer
-                  </Button>
+                  <SendToBufferButton postText={post.text} />
                 </div>
                 <div className="relative bg-muted">
                   <Image
@@ -91,7 +112,6 @@ export function PostResults({ data }: PostResultsProps) {
                     width={600}
                     height={400}
                     className="object-cover w-full h-full"
-                    data-ai-hint={imageHint}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex flex-col justify-end">
                     <div className="flex items-start gap-2 text-primary-foreground/90">
