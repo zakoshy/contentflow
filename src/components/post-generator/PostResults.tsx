@@ -44,8 +44,9 @@ const SendToBufferButton = ({ postText }: { postText: string }) => {
   );
 };
 
-const ImageUploader = ({ imageIdea }: { imageIdea: string }) => {
+const ImageUploader = ({ imageIdea, index }: { imageIdea: string; index: number }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const uniqueId = `file-upload-${index}`;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -69,7 +70,7 @@ const ImageUploader = ({ imageIdea }: { imageIdea: string }) => {
         />
       ) : (
         <div className="text-center">
-          <label htmlFor="file-upload" className="cursor-pointer">
+          <label htmlFor={uniqueId} className="cursor-pointer">
             <div className="flex flex-col items-center gap-2 text-muted-foreground">
               <Lightbulb className="h-8 w-8" />
               <span className="font-semibold">AI Image Idea:</span>
@@ -81,7 +82,7 @@ const ImageUploader = ({ imageIdea }: { imageIdea: string }) => {
                 </div>
               </Button>
             </div>
-            <input id="file-upload" name="file-upload" type="file" className="sr-only" accept="image/*" onChange={handleFileChange} />
+            <input id={uniqueId} name={uniqueId} type="file" className="sr-only" accept="image/*" onChange={handleFileChange} />
           </label>
         </div>
       )}
@@ -145,7 +146,7 @@ export function PostResults({ data }: PostResultsProps) {
                   </div>
                   <SendToBufferButton postText={post.text} />
                 </div>
-                <ImageUploader imageIdea={post.image_idea} />
+                <ImageUploader imageIdea={post.image_idea} index={index} />
               </div>
             </Card>
           )
