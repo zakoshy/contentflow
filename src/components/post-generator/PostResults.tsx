@@ -91,7 +91,8 @@ export function PostResults({ data }: PostResultsProps) {
       <CardContent className="space-y-6">
         {data.posts.map((post, index) => {
           const imageHint = getHint(post.image_idea);
-          const imageUrl = `https://source.unsplash.com/600x400/?${encodeURIComponent(imageHint)}`;
+          const imageSeed = imageHint.split(' ')[0] || 'post';
+          const imageUrl = `https://picsum.photos/seed/${imageSeed}-${index}/600/400`;
           return (
             <Card key={index} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-3">
