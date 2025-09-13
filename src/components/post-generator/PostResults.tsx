@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Download, Lightbulb, BotMessageSquare, Send, Loader2, Upload } from 'lucide-react';
+import { Download, Lightbulb, BotMessageSquare, Send, Loader2, Upload, Replace } from 'lucide-react';
 import Image from 'next/image';
 import { SocialIcon } from './SocialIcon';
 import React, { useState } from 'react';
@@ -60,14 +60,27 @@ const ImageUploader = ({ imageIdea, index }: { imageIdea: string; index: number 
   };
 
   return (
-    <div className="relative bg-muted min-h-[200px] flex items-center justify-center p-4">
+    <div className="relative bg-muted min-h-[200px] flex items-center justify-center p-4 group">
       {imagePreview ? (
-        <Image
-          src={imagePreview}
-          alt="Uploaded image preview"
-          fill
-          className="object-cover w-full h-full"
-        />
+        <>
+          <Image
+            src={imagePreview}
+            alt="Uploaded image preview"
+            fill
+            className="object-cover w-full h-full"
+          />
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+             <label htmlFor={uniqueId} className="cursor-pointer">
+              <Button asChild variant="secondary">
+                <div>
+                  <Replace className="mr-2 h-4 w-4" />
+                  Change Image
+                </div>
+              </Button>
+              <input id={uniqueId} name={uniqueId} type="file" className="sr-only" accept="image/*" onChange={handleFileChange} />
+            </label>
+          </div>
+        </>
       ) : (
         <div className="text-center">
           <label htmlFor={uniqueId} className="cursor-pointer">
