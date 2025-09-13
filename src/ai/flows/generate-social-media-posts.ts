@@ -18,6 +18,7 @@ const GenerateSocialMediaPostsInputSchema = z.object({
     .enum(['X', 'LinkedIn', 'Instagram', 'Facebook'])
     .describe('The social media platform for the posts.'),
   numberOfPosts: z.number().int().min(1).describe('The number of posts to generate.'),
+  postText: z.string().optional().describe('The text of a specific post to be analyzed.'),
   likes: z.number().optional().describe('Number of likes for analytics.'),
   comments: z.number().optional().describe('Number of comments for analytics.'),
   shares: z.number().optional().describe('Number of shares for analytics.'),
@@ -61,24 +62,32 @@ const prompt = ai.definePrompt({
 Your task has two phases:
 
 ### Phase 1: Generate Posts
+If no specific post text is provided for analysis, your primary task is to generate new posts.
 1. Generate engaging, professional, audience-relevant social media posts.
 2. Align posts with the organization’s mission and tone.
-3. Keep posts short: max 280 characters for X/Twitter, up to 200 words for LinkedIn/Instagram/Facebook.
+3. Keep posts short: max 280 characters for X, up to 200 words for LinkedIn/Instagram/Facebook.
 4. Include 2–5 relevant hashtags per post.
-5. Optionally suggest an image idea (do not generate the image).
+5. Suggest an image idea for each post.
 
-### Phase 2: Analyze Post Performance (if analytics are available)
-1. Summarize post engagement in a clear, professional way.
-2. Highlight key metrics: likes, comments, shares, clicks, impressions/reach.
-3. Provide recommendations for improving future posts (e.g., posting time, hashtags, content type).
+### Phase 2: Analyze Post Performance
+If a specific post text (postText) and its analytics data (likes, comments, etc.) are provided, your primary task is to analyze that post.
+1. Use the provided post text as the content to analyze.
+2. Summarize the post's engagement in a clear, professional way.
+3. Highlight key metrics: likes, comments, shares, clicks, impressions/reach.
+4. Provide recommendations for improving future posts based on the performance of this specific post.
+5. In this case, you should only return one post in the 'posts' array, which includes the original text and the new analytics fields.
 
 ### Input:
 - Organization name: {{{organizationName}}}
-- Topics/keywords: {{#each topics}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 - Platform: {{{platform}}}
+{{#if postText}}
+- Post to Analyze: {{{postText}}}
+{{else}}
+- Topics/keywords: {{#each topics}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 - Number of posts: {{{numberOfPosts}}}
+{{/if}}
 {{#if likes}}
-- Optional Analytics (for Phase 2):
+- Analytics Data:
   - Likes: {{{likes}}}
   - Comments: {{{comments}}}
   - Shares: {{{shares}}}
@@ -87,10 +96,9 @@ Your task has two phases:
   - Date posted: {{{date_posted}}}
 {{/if}}
 
-Generate {{numberOfPosts}} social media posts for {{organizationName}} on {{platform}}.
-Topics include: {{#each topics}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
-Follow the rules and output the JSON format. If analytics data is provided, perform Phase 2.
-If analytics data is not provided, only perform Phase 1.
+Please follow the rules and output the JSON format.
+- If analytics data and postText are provided, perform Phase 2 for that specific post.
+- Otherwise, perform Phase 1 and generate {{numberOfPosts}} new posts for {{organizationName}} on {{platform}}.
 `,
 });
 
