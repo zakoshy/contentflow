@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 const sendToBufferSchema = z.object({
   text: z.string(),
-  imageUrl: z.string().optional(),
+  // The imageUrl is no longer needed as we are providing image ideas.
 });
 
 export interface SendToBufferState {
@@ -18,7 +18,6 @@ export async function sendToBuffer(
   try {
     const validatedFields = sendToBufferSchema.safeParse({
       text: formData.get('text'),
-      imageUrl: formData.get('imageUrl'),
     });
 
     if (!validatedFields.success) {
@@ -37,12 +36,10 @@ export async function sendToBuffer(
       };
     }
 
-    const { text, imageUrl } = validatedFields.data;
+    const { text } = validatedFields.data;
 
-    const payload: { text: string; imageUrl?: string } = { text };
-    if (imageUrl) {
-      payload.imageUrl = imageUrl;
-    }
+    // The payload no longer includes an imageUrl.
+    const payload = { text };
 
     const response = await fetch(webhookUrl, {
       method: 'POST',

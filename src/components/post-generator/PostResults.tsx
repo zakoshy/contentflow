@@ -4,11 +4,9 @@ import type { GenerateSocialMediaPostsOutput } from '@/ai/flows/generate-social-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Download, Lightbulb, BotMessageSquare, Send, Loader2, Upload, Replace } from 'lucide-react';
-import Image from 'next/image';
+import { Download, Lightbulb, BotMessageSquare, Send, Loader2 } from 'lucide-react';
 import { SocialIcon } from './SocialIcon';
-import React, { useState } from 'react';
+import React from 'react';
 import { useTransition } from 'react';
 import { sendToBuffer } from '@/app/buffer-actions';
 import { useToast } from '@/hooks/use-toast';
@@ -17,16 +15,13 @@ interface PostResultsProps {
   data?: GenerateSocialMediaPostsOutput;
 }
 
-const SendToBufferButton = ({ postText, imageUrl }: { postText: string; imageUrl: string | null }) => {
+const SendToSocialMediaButton = ({ postText }: { postText: string }) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   const handleSend = async () => {
     const formData = new FormData();
     formData.append('text', postText);
-    if (imageUrl) {
-      formData.append('imageUrl', imageUrl);
-    }
     
     startTransition(async () => {
       const result = await sendToBuffer(formData);
@@ -46,82 +41,21 @@ const SendToBufferButton = ({ postText, imageUrl }: { postText: string; imageUrl
   );
 };
 
-const ImageUploader = ({ imageIdea, index, onImageUpload }: { imageIdea: string; index: number; onImageUpload: (image: string | null) => void; }) => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const uniqueId = `file-upload-${index}`;
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        setImagePreview(result);
-        onImageUpload(result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
+const ImageIdea = ({ imageIdea }: { imageIdea: string }) => {
   return (
     <div className="relative bg-muted min-h-[200px] flex items-center justify-center p-4 group">
-      {imagePreview ? (
-        <>
-          <Image
-            src={imagePreview}
-            alt="Uploaded image preview"
-            fill
-            className="object-cover w-full h-full"
-          />
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-             <label htmlFor={uniqueId} className="cursor-pointer">
-              <Button asChild variant="secondary">
-                <div>
-                  <Replace className="mr-2 h-4 w-4" />
-                  Change Image
-                </div>
-              </Button>
-              <input id={uniqueId} name={uniqueId} type="file" className="sr-only" accept="image/*" onChange={handleFileChange} />
-            </label>
-          </div>
-        </>
-      ) : (
-        <div className="text-center">
-          <label htmlFor={uniqueId} className="cursor-pointer">
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              <Lightbulb className="h-8 w-8" />
-              <span className="font-semibold">AI Image Idea:</span>
-              <p className="text-sm text-center mb-2">&quot;{imageIdea}&quot;</p>
-              <Button asChild variant="outline">
-                <div>
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload Image
-                </div>
-              </Button>
-            </div>
-            <input id={uniqueId} name={uniqueId} type="file" className="sr-only" accept="image/*" onChange={handleFileChange} />
-          </label>
+      <div className="text-center">
+        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+          <Lightbulb className="h-8 w-8" />
+          <span className="font-semibold">AI Image Idea:</span>
+          <p className="text-sm text-center mb-2">&quot;{imageIdea}&quot;</p>
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
 export function PostResults({ data }: PostResultsProps) {
-  const [uploadedImages, setUploadedImages] = useState<(string | null)[]>([]);
-
-  React.useEffect(() => {
-    if (data?.posts) {
-      setUploadedImages(new Array(data.posts.length).fill(null));
-    }
-  }, [data]);
-
-  const handleImageUpload = (index: number, image: string | null) => {
-    const newImages = [...uploadedImages];
-    newImages[index] = image;
-    setUploadedImages(newImages);
-  };
-
   if (!data) {
     return (
         <div className="flex flex-col items-center justify-center h-full min-h-[60vh] rounded-lg border border-dashed shadow-sm bg-card">
@@ -175,12 +109,10 @@ export function PostResults({ data }: PostResultsProps) {
                       </Badge>
                     ))}
                   </div>
-                  <SendToBufferButton postText={post.text} imageUrl={uploadedImages[index]} />
+                  <SendToSocialMediaButton postText={post.text} />
                 </div>
-                <ImageUploader 
+                <ImageIdea 
                   imageIdea={post.image_idea} 
-                  index={index}
-                  onImageUpload={(image) => handleImageUpload(index, image)} 
                 />
               </div>
             </Card>
