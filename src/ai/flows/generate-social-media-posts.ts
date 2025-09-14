@@ -39,7 +39,7 @@ const GenerateSocialMediaPostsOutputSchema = z.object({
     z.object({
       text: z.string().describe('The generated social media post text.'),
       hashtags: z.array(z.string()).describe('A list of relevant hashtags.'),
-      image_idea: z.string().describe('An idea for an image to accompany the post.'),
+      image_idea: z.string().describe('An idea for an image or video to accompany the post.'),
       analytics_summary: z.string().optional().describe('Summary of post performance.'),
       highlights: z.array(z.string()).optional().describe('Most important metrics or insights.'),
       recommendations: z.array(z.string()).optional().describe('Optional tips or suggestions for next posts.'),
@@ -69,9 +69,15 @@ If no specific post text is provided for analysis, your primary task is to gener
 2. Align posts with the organization’s mission.
 3. Use the specified tone: {{{tone}}}.
 4. Write all posts in the specified language: {{{language}}}. For Sheng, use a modern, authentic Nairobi slang style.
-5. Keep posts short: max 280 characters for X, up to 200 words for LinkedIn/Instagram/Facebook. For TikTok, keep it even shorter and use a more casual, trending-aware tone.
-6. Include 2–5 relevant hashtags per post.
-7. Suggest an image idea for each post.
+5. Include 2–5 relevant hashtags per post.
+6. Suggest a visual idea (image or video) for each post, keeping the platform in mind.
+
+### Platform-Specific Guidelines:
+- X: Keep posts short and concise (max 280 characters). Use hashtags and mentions. Image ideas should be impactful and simple.
+- LinkedIn: Professional tone. Longer posts (up to 200 words) are acceptable. Focus on industry insights, company news, and thought leadership. Image ideas should be professional graphics, charts, or team photos.
+- Instagram: Visually-driven. Write engaging captions. Image ideas should be high-quality photos, carousels, or short Reels.
+- Facebook: Versatile. Can be casual or official. Posts can be longer. Good for community building and sharing links.
+- TikTok: Casual, fun, and trend-aware tone. Keep text very short. The 'image_idea' should be a concept for a short vertical video (e.g., "A quick tutorial video showing... a before-and-after clip...").
 
 ### Phase 2: Analyze Post Performance
 If a specific post text (postText) and its analytics data (likes, comments, etc.) are provided, your primary task is to analyze that post.
