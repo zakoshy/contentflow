@@ -41,7 +41,7 @@ const SendToBufferButton = ({ postText, imageUrl }: { postText: string; imageUrl
   return (
     <Button variant="outline" size="sm" className="mt-auto w-fit" onClick={handleSend} disabled={isPending}>
       {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Send className="mr-2 h-4 w-4" />}
-      Send to Buffer
+      Send to Social Media
     </Button>
   );
 };

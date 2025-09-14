@@ -57,7 +57,7 @@ export async function sendToBuffer(
     }
 
     return {
-      message: 'Post sent to your Zapier workflow successfully!',
+      message: 'Post sent successfully!',
     };
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
