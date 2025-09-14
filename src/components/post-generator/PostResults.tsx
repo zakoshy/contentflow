@@ -9,8 +9,8 @@ import { Download, Lightbulb, BotMessageSquare, Send, Loader2, Upload, Replace }
 import Image from 'next/image';
 import { SocialIcon } from './SocialIcon';
 import React, { useState } from 'react';
-import { useActionState, useTransition } from 'react';
-import { sendToBuffer, type SendToBufferState } from '@/app/buffer-actions';
+import { useTransition } from 'react';
+import { sendToBuffer } from '@/app/buffer-actions';
 import { useToast } from '@/hooks/use-toast';
 
 interface PostResultsProps {
@@ -29,7 +29,7 @@ const SendToBufferButton = ({ postText, imageUrl }: { postText: string; imageUrl
     }
     
     startTransition(async () => {
-      const result = await sendToBuffer({ message: '' }, formData);
+      const result = await sendToBuffer(formData);
       toast({
         title: result.error ? 'Error' : 'Success',
         description: result.message,

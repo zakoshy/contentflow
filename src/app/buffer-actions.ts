@@ -13,7 +13,6 @@ export interface SendToBufferState {
 }
 
 export async function sendToBuffer(
-  prevState: SendToBufferState,
   formData: FormData
 ): Promise<SendToBufferState> {
   try {
