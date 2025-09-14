@@ -37,15 +37,19 @@ export async function sendToBuffer(
       };
     }
 
+    const { text, imageUrl } = validatedFields.data;
+
+    const payload: { text: string; imageUrl?: string } = { text };
+    if (imageUrl) {
+      payload.imageUrl = imageUrl;
+    }
+
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ 
-        text: validatedFields.data.text,
-        imageUrl: validatedFields.data.imageUrl
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
