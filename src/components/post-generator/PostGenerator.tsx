@@ -118,11 +118,6 @@ export function PostGenerator() {
                   )}
                 />
 
-                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
-                  {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                  Generate Posts
-                </Button>
-
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
@@ -170,6 +165,11 @@ export function PostGenerator() {
                       )}
                     />
                   </div>
+
+                  <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
+                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    Generate Posts
+                  </Button>
 
                   <FormField
                     control={form.control}
