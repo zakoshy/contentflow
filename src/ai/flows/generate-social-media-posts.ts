@@ -18,6 +18,8 @@ const GenerateSocialMediaPostsInputSchema = z.object({
     .enum(['X', 'LinkedIn', 'Instagram', 'Facebook', 'TikTok'])
     .describe('The social media platform for the posts.'),
   numberOfPosts: z.number().int().min(1).describe('The number of posts to generate.'),
+  tone: z.enum(['Casual', 'Official', 'Fun']).describe('The desired tone for the posts.'),
+  language: z.enum(['English', 'Swahili', 'Sheng']).describe('The desired language for the posts.'),
   postText: z.string().optional().describe('The text of a specific post to be analyzed.'),
   likes: z.number().optional().describe('Number of likes for analytics.'),
   comments: z.number().optional().describe('Number of comments for analytics.'),
@@ -64,10 +66,12 @@ Your task has two phases:
 ### Phase 1: Generate Posts
 If no specific post text is provided for analysis, your primary task is to generate new posts.
 1. Generate engaging, professional, audience-relevant social media posts.
-2. Align posts with the organization’s mission and tone.
-3. Keep posts short: max 280 characters for X, up to 200 words for LinkedIn/Instagram/Facebook. For TikTok, keep it even shorter and use a more casual, trending-aware tone.
-4. Include 2–5 relevant hashtags per post.
-5. Suggest an image idea for each post.
+2. Align posts with the organization’s mission.
+3. Use the specified tone: {{{tone}}}.
+4. Write all posts in the specified language: {{{language}}}. For Sheng, use a modern, authentic Nairobi slang style.
+5. Keep posts short: max 280 characters for X, up to 200 words for LinkedIn/Instagram/Facebook. For TikTok, keep it even shorter and use a more casual, trending-aware tone.
+6. Include 2–5 relevant hashtags per post.
+7. Suggest an image idea for each post.
 
 ### Phase 2: Analyze Post Performance
 If a specific post text (postText) and its analytics data (likes, comments, etc.) are provided, your primary task is to analyze that post.
@@ -80,6 +84,8 @@ If a specific post text (postText) and its analytics data (likes, comments, etc.
 ### Input:
 - Organization name: {{{organizationName}}}
 - Platform: {{{platform}}}
+- Tone: {{{tone}}}
+- Language: {{{language}}}
 {{#if postText}}
 - Post to Analyze: {{{postText}}}
 {{else}}

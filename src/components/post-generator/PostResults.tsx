@@ -1,4 +1,3 @@
-
 'use client';
 
 import type { GenerateSocialMediaPostsOutput } from '@/ai/flows/generate-social-media-posts';
@@ -18,13 +17,16 @@ interface PostResultsProps {
   data?: GenerateSocialMediaPostsOutput;
 }
 
-const SendToBufferButton = ({ postText }: { postText: string }) => {
+const SendToBufferButton = ({ postText, imageUrl }: { postText: string; imageUrl: string | null }) => {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   const handleSend = async () => {
     const formData = new FormData();
     formData.append('text', postText);
+    if (imageUrl) {
+      formData.append('imageUrl', imageUrl);
+    }
     
     startTransition(async () => {
       const result = await sendToBuffer({ message: '' }, formData);
@@ -44,7 +46,7 @@ const SendToBufferButton = ({ postText }: { postText: string }) => {
   );
 };
 
-const ImageUploader = ({ imageIdea, index }: { imageIdea: string; index: number }) => {
+const ImageUploader = ({ imageIdea, index, onImageUpload }: { imageIdea: string; index: number; onImageUpload: (image: string | null) => void; }) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const uniqueId = `file-upload-${index}`;
 
@@ -53,7 +55,9 @@ const ImageUploader = ({ imageIdea, index }: { imageIdea: string; index: number 
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        const result = reader.result as string;
+        setImagePreview(result);
+        onImageUpload(result);
       };
       reader.readAsDataURL(file);
     }
@@ -104,6 +108,20 @@ const ImageUploader = ({ imageIdea, index }: { imageIdea: string; index: number 
 };
 
 export function PostResults({ data }: PostResultsProps) {
+  const [uploadedImages, setUploadedImages] = useState<(string | null)[]>([]);
+
+  React.useEffect(() => {
+    if (data?.posts) {
+      setUploadedImages(new Array(data.posts.length).fill(null));
+    }
+  }, [data]);
+
+  const handleImageUpload = (index: number, image: string | null) => {
+    const newImages = [...uploadedImages];
+    newImages[index] = image;
+    setUploadedImages(newImages);
+  };
+
   if (!data) {
     return (
         <div className="flex flex-col items-center justify-center h-full min-h-[60vh] rounded-lg border border-dashed shadow-sm bg-card">
@@ -157,9 +175,13 @@ export function PostResults({ data }: PostResultsProps) {
                       </Badge>
                     ))}
                   </div>
-                  <SendToBufferButton postText={post.text} />
+                  <SendToBufferButton postText={post.text} imageUrl={uploadedImages[index]} />
                 </div>
-                <ImageUploader imageIdea={post.image_idea} index={index} />
+                <ImageUploader 
+                  imageIdea={post.image_idea} 
+                  index={index}
+                  onImageUpload={(image) => handleImageUpload(index, image)} 
+                />
               </div>
             </Card>
           )

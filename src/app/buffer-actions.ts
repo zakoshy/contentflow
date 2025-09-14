@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 const sendToBufferSchema = z.object({
   text: z.string(),
+  imageUrl: z.string().optional(),
 });
 
 export interface SendToBufferState {
@@ -18,6 +19,7 @@ export async function sendToBuffer(
   try {
     const validatedFields = sendToBufferSchema.safeParse({
       text: formData.get('text'),
+      imageUrl: formData.get('imageUrl'),
     });
 
     if (!validatedFields.success) {
@@ -41,7 +43,10 @@ export async function sendToBuffer(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ text: validatedFields.data.text }),
+      body: JSON.stringify({ 
+        text: validatedFields.data.text,
+        imageUrl: validatedFields.data.imageUrl
+      }),
     });
 
     if (!response.ok) {

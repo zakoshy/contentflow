@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState, useTransition } from 'react';
@@ -19,6 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, Linkedin, Instagram, Facebook } from 'lucide-react';
 import { PostResults } from './PostResults';
 import { SocialIcon } from './SocialIcon';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const platformOptions = [
   { value: 'X', label: 'Twitter', icon: <SocialIcon platform="X" className="h-5 w-5" /> },
@@ -45,6 +45,8 @@ export function PostGenerator() {
       topics: '',
       platform: 'X',
       numberOfPosts: 3,
+      tone: 'Casual',
+      language: 'English',
     },
   });
 
@@ -117,10 +119,52 @@ export function PostGenerator() {
                     )}
                   />
 
-                  <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isPending}>
-                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Generate Posts
-                  </Button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="tone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Tone</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a tone" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="Casual">Casual</SelectItem>
+                              <SelectItem value="Official">Official</SelectItem>
+                              <SelectItem value="Fun">Fun</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="language"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Language</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a language" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="English">English</SelectItem>
+                              <SelectItem value="Swahili">Swahili</SelectItem>
+                              <SelectItem value="Sheng">Sheng</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -174,6 +218,11 @@ export function PostGenerator() {
                       </FormItem>
                     )}
                   />
+
+                  <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
+                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                    Generate Posts
+                  </Button>
                 </div>
               </form>
             </Form>

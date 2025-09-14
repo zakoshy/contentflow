@@ -23,6 +23,8 @@ export async function generatePostsAction(
       topics: formData.get('topics'),
       platform: formData.get('platform'),
       numberOfPosts: formData.get('numberOfPosts'),
+      tone: formData.get('tone'),
+      language: formData.get('language'),
     });
 
     if (!validatedFields.success) {
