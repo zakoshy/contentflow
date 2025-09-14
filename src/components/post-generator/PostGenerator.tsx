@@ -89,36 +89,36 @@ export function PostGenerator() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={onSubmit} className="space-y-8">
+                <FormField
+                  control={form.control}
+                  name="organizationName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Organization Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., BlueRide" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="topics"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Topics / Keywords</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="e.g., eco-friendly transport, boat rides in Kenya" {...field} />
+                      </FormControl>
+                      <FormDescription>Comma-separated list of topics.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="organizationName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Organization Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="e.g., BlueRide" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="topics"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Topics / Keywords</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="e.g., eco-friendly transport, boat rides in Kenya" {...field} />
-                        </FormControl>
-                        <FormDescription>Comma-separated list of topics.</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -218,12 +218,11 @@ export function PostGenerator() {
                       </FormItem>
                     )}
                   />
-
-                  <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
-                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Generate Posts
-                  </Button>
                 </div>
+                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
+                  {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Generate Posts
+                </Button>
               </form>
             </Form>
           </CardContent>
