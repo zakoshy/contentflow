@@ -11,12 +11,12 @@ export function Header() {
             <Link href="/">ContentFlow AI</Link>
           </h1>
         </div>
-        <nav>
+        {/* <nav>
           <Link href="/analytics" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
             <LineChart className="h-5 w-5" />
             Analytics
           </Link>
-        </nav>
+        </nav> */}
       </div>
     </header>
   );
