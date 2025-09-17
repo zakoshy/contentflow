@@ -10,6 +10,7 @@ import React, { useState, useTransition, useRef } from 'react';
 import { sendToBuffer } from '@/app/buffer-actions';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { uploadImage } from '@/app/cloudinary-actions';
 
 interface PostResultsProps {
   data?: GenerateSocialMediaPostsOutput;
@@ -46,7 +47,9 @@ const SendToSocialMediaButton = ({ postText, imageUrl }: { postText: string; ima
 
 const ImageUploader = ({ onImageReady }: { onImageReady: (imageUrl: string | null) => void }) => {
   const [image, setImage] = useState<string | null>(null);
+  const [isUploading, startUploading] = useTransition();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -55,17 +58,31 @@ const ImageUploader = ({ onImageReady }: { onImageReady: (imageUrl: string | nul
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // NOTE: This is where you would upload the file to Cloudinary.
-      // 1. Create a server action that takes the file.
-      // 2. In that action, use the Cloudinary SDK to upload the file.
-      // 3. The action should return the public URL from Cloudinary.
-      // 4. Set that URL as the image.
-      // For now, we'll use a Data URI as a placeholder.
       const reader = new FileReader();
       reader.onload = (loadEvent) => {
         const dataUrl = loadEvent.target?.result as string;
-        setImage(dataUrl);
-        onImageReady(dataUrl);
+        
+        startUploading(async () => {
+          try {
+            const result = await uploadImage(dataUrl);
+            if (result.error || !result.url) {
+              throw new Error(result.message);
+            }
+            setImage(result.url);
+            onImageReady(result.url);
+            toast({
+              title: 'Success',
+              description: 'Image uploaded to Cloudinary.',
+            });
+          } catch (e) {
+            const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred during upload.';
+            toast({
+              variant: 'destructive',
+              title: 'Upload Failed',
+              description: errorMessage,
+            });
+          }
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -76,6 +93,7 @@ const ImageUploader = ({ onImageReady }: { onImageReady: (imageUrl: string | nul
       const link = document.createElement('a');
       link.href = image;
       link.download = `contentflow-ai-image-${Date.now()}.png`;
+      link.target = '_blank';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -98,8 +116,14 @@ const ImageUploader = ({ onImageReady }: { onImageReady: (imageUrl: string | nul
         onChange={handleFileChange}
         accept="image/png, image/jpeg, image/gif"
         className="sr-only"
+        disabled={isUploading}
       />
-      {image ? (
+      {isUploading ? (
+        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <span className="font-semibold">Uploading...</span>
+        </div>
+      ) : image ? (
         <div className="w-full h-full relative group aspect-video">
           <Image src={image} alt="Uploaded image" fill objectFit="cover" />
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
