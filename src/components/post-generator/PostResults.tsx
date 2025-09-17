@@ -84,6 +84,12 @@ const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // NOTE: This is where you would upload the file to Cloudinary.
+      // 1. Create a server action that takes the file.
+      // 2. In that action, use the Cloudinary SDK to upload the file.
+      // 3. The action should return the public URL from Cloudinary.
+      // 4. Set that URL as the image.
+      // For now, we'll use a Data URI as a placeholder.
       const reader = new FileReader();
       reader.onload = (loadEvent) => {
         const dataUrl = loadEvent.target?.result as string;
@@ -98,6 +104,8 @@ const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string
     if (image) {
       const link = document.createElement('a');
       link.href = image;
+      // Note: For public URLs, download might not work as expected without correct CORS headers.
+      // For data URIs, this works fine.
       link.download = `contentflow-ai-image-${Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
@@ -108,6 +116,7 @@ const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string
   const handleRemoveImage = () => {
     setImage(null);
     onImageReady(null);
+    // Reset file input so the same file can be selected again
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -129,7 +138,7 @@ const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string
         </div>
       ) : image ? (
         <div className="w-full h-full relative group aspect-video">
-          <Image src={image} alt="Generated or uploaded image" layout="fill" objectFit="cover" />
+          <Image src={image} alt="Generated or uploaded image" fill objectFit="cover" />
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button variant="outline" size="sm" onClick={handleDownloadImage}>
               <Download className="mr-2 h-4 w-4" />
