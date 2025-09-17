@@ -73,7 +73,7 @@ If no specific post text is provided for analysis, your primary task is to gener
 6. Suggest a visual idea (image or video) for each post, keeping the platform in mind.
 
 ### Platform-Specific Guidelines:
-- X: Keep posts short and concise (max 280 characters). Use hashtags and mentions. Image ideas should be impactful and simple.
+- X: Keep posts concise. The post text itself should be **no more than 250 characters**. This is to leave room for an image URL that will be added later. Use hashtags and mentions. Image ideas should be impactful and simple.
 - LinkedIn: Professional tone. Longer posts (up to 200 words) are acceptable. Focus on industry insights, company news, and thought leadership. Image ideas should be professional graphics, charts, or team photos.
 - Instagram: Visually-driven. Write engaging captions. Image ideas should be high-quality photos, carousels, or short Reels.
 - Facebook: Versatile. Can be casual or official. Posts can be longer. Good for community building and sharing links.
