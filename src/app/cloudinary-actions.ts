@@ -2,8 +2,8 @@
 
 import {v2 as cloudinary} from 'cloudinary';
 
-// IMPORTANT: You must fill in these values in your .env file.
-// You can find them in your Cloudinary dashboard under Settings > API Keys.
+// Configure Cloudinary with credentials from environment variables.
+// This is the secure way to initialize the SDK.
 cloudinary.config({ 
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
   api_key: process.env.CLOUDINARY_API_KEY, 
@@ -12,7 +12,7 @@ cloudinary.config({
 });
 
 export async function uploadImage(imageDataUri: string): Promise<{ message: string; url?: string; error?: boolean }> {
-  // Check if Cloudinary is configured.
+  // Check if Cloudinary is configured. If not, return a clear error.
   if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
     return {
       message: "Cloudinary credentials are not configured. Please check your .env file.",
