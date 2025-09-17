@@ -4,12 +4,11 @@ import type { GenerateSocialMediaPostsOutput } from '@/ai/flows/generate-social-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Download, BotMessageSquare, Send, Loader2, Image as ImageIcon, Wand2, Upload } from 'lucide-react';
+import { Download, BotMessageSquare, Send, Loader2, Image as ImageIcon, Upload } from 'lucide-react';
 import { SocialIcon } from './SocialIcon';
 import React, { useState, useTransition, useRef } from 'react';
 import { sendToBuffer } from '@/app/buffer-actions';
 import { useToast } from '@/hooks/use-toast';
-import { generateImage } from '@/ai/flows/generate-image';
 import Image from 'next/image';
 
 interface PostResultsProps {
@@ -45,38 +44,10 @@ const SendToSocialMediaButton = ({ postText, imageUrl }: { postText: string; ima
   );
 };
 
-const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string; postText: string, onImageReady: (imageUrl: string | null) => void }) => {
-  const [isGenerating, startAIGeneration] = useTransition();
+const ImageUploader = ({ onImageReady }: { onImageReady: (imageUrl: string | null) => void }) => {
   const [image, setImage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleGenerateImage = () => {
-    startAIGeneration(async () => {
-      setError(null);
-      try {
-        const result = await generateImage({
-          prompt: `A social media image for a post about "${postText}". Image idea: ${imageIdea}`,
-        });
-        if (result.imageUrl) {
-          setImage(result.imageUrl);
-          onImageReady(result.imageUrl);
-        } else {
-          throw new Error('Image generation failed to produce an image.');
-        }
-      } catch (e) {
-        const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
-        setError(errorMessage);
-        toast({
-          variant: 'destructive',
-          title: 'Image Generation Failed',
-          description: errorMessage,
-        });
-      }
-    });
-  };
-  
   const handleUploadClick = () => {
     fileInputRef.current?.click();
   };
@@ -104,8 +75,6 @@ const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string
     if (image) {
       const link = document.createElement('a');
       link.href = image;
-      // Note: For public URLs, download might not work as expected without correct CORS headers.
-      // For data URIs, this works fine.
       link.download = `contentflow-ai-image-${Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
@@ -116,7 +85,6 @@ const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string
   const handleRemoveImage = () => {
     setImage(null);
     onImageReady(null);
-    // Reset file input so the same file can be selected again
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -131,14 +99,9 @@ const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string
         accept="image/png, image/jpeg, image/gif"
         className="sr-only"
       />
-      {isGenerating ? (
-        <div className="text-center space-y-2">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Generating image...</p>
-        </div>
-      ) : image ? (
+      {image ? (
         <div className="w-full h-full relative group aspect-video">
-          <Image src={image} alt="Generated or uploaded image" fill objectFit="cover" />
+          <Image src={image} alt="Uploaded image" fill objectFit="cover" />
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button variant="outline" size="sm" onClick={handleDownloadImage}>
               <Download className="mr-2 h-4 w-4" />
@@ -153,20 +116,12 @@ const ImageDisplay = ({ imageIdea, postText, onImageReady }: { imageIdea: string
         <div className="text-center space-y-4">
           <div className="flex flex-col items-center gap-2 text-muted-foreground">
             <ImageIcon className="h-8 w-8" />
-            <span className="font-semibold">AI Image Idea:</span>
-            <p className="text-sm text-center mb-2">&quot;{imageIdea}&quot;</p>
+            <span className="font-semibold">Upload an Image</span>
           </div>
-          <div className='flex gap-2'>
-            <Button onClick={handleGenerateImage} disabled={isGenerating}>
-              <Wand2 className="mr-2 h-4 w-4" />
-              Generate
-            </Button>
-             <Button variant="secondary" onClick={handleUploadClick}>
-              <Upload className="mr-2 h-4 w-4" />
-              Upload
-            </Button>
-          </div>
-          {error && <p className="text-xs text-destructive">{error}</p>}
+          <Button variant="secondary" onClick={handleUploadClick}>
+            <Upload className="mr-2 h-4 w-4" />
+            Upload from Media
+          </Button>
         </div>
       )}
     </div>
@@ -235,9 +190,7 @@ export function PostResults({ data }: PostResultsProps) {
                   </div>
                   <SendToSocialMediaButton postText={post.text} imageUrl={images[index] ?? undefined} />
                 </div>
-                <ImageDisplay 
-                    imageIdea={post.image_idea} 
-                    postText={post.text}
+                <ImageUploader 
                     onImageReady={(imageUrl) => handleImageReady(index, imageUrl)}
                 />
               </div>
