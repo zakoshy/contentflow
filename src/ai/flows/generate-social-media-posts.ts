@@ -65,59 +65,37 @@ const prompt = ai.definePrompt({
   name: 'generateSocialMediaPostsPrompt',
   input: {schema: GenerateSocialMediaPostsInputSchema},
   output: {schema: GenerateSocialMediaPostsOutputSchema},
-  prompt: `You are a social media content creation and analytics agent for organizations.
-Your task has two phases:
+  prompt: `You are a social media content creation and analytics agent. Your primary task is to generate social media posts based on the provided inputs.
 
-### Phase 1: Generate Posts
-If no specific post text is provided for analysis, your primary task is to generate new posts.
-1. Generate a total of {{{numberOfPosts}}} unique, engaging, professional, audience-relevant social media post concepts.
-2. For each post concept, generate a version tailored for EACH of the following platforms: {{#each platforms}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
-3. Align posts with the organization’s mission.
-4. Use the specified tone: {{{tone}}}.
-5. Write all posts in the specified language: {{{language}}}. For Sheng, use a modern, authentic Nairobi slang style.
-6. Include 2–5 relevant hashtags per post.
-7. Suggest a visual idea (image or video) for each post, keeping the platform in mind.
-8. Each conceptual post should have a unique 'post_id' (e.g., "post_1", "post_2"). The 'platform_posts' object should contain the tailored post for each specified platform.
+  **Instructions for Post Generation:**
+  1.  **Generate Concepts:** Create {{{numberOfPosts}}} unique and engaging social media post concepts. Each concept should be distinct.
+  2.  **Tailor for Platforms:** For each individual concept, you must generate a version specifically tailored for EACH of the following platforms: {{#each platforms}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}.
+  3.  **Content Guidelines:**
+      *   **Organization:** Posts should align with the mission of {{{organizationName}}}.
+      *   **Tone:** Use a {{{tone}}} tone.
+      *   **Language:** Write all content in {{{language}}}.
+      *   **Hashtags:** Include 2-5 relevant hashtags for each post.
+      *   **Visuals:** Suggest a relevant image or video idea for each post.
+  4.  **Output Structure:**
+      *   Each post concept must have a unique \`post_id\` (e.g., "post_1", "post_2").
+      *   The \`platform_posts\` object for each concept must contain the tailored content for every platform specified in the input.
 
-### Platform-Specific Guidelines:
-- X: Keep posts concise. The post text itself should be **no more than 250 characters**. This is to leave room for an image URL that will be added later. Use hashtags and mentions. Image ideas should be impactful and simple.
-- LinkedIn: Professional tone. Longer posts (up to 200 words) are acceptable. Focus on industry insights, company news, and thought leadership. Image ideas should be professional graphics, charts, or team photos.
-- Instagram: Visually-driven. Write engaging captions. Image ideas should be high-quality photos, carousels, or short Reels.
-- Facebook: Versatile. Can be casual or official. Posts can be longer. Good for community building and sharing links.
-- TikTok: Casual, fun, and trend-aware tone. Keep text very short. The 'image_idea' should be a concept for a short vertical video (e.g., "A quick tutorial video showing... a before-and-after clip...").
+  **Platform-Specific Hints:**
+  *   **X:** Be concise (max 250 characters for the text). Use hashtags.
+  *   **LinkedIn:** Professional tone. Longer-form content is acceptable.
+  *   **Instagram:** Visually-driven captions.
+  *   **Facebook:** Versatile for community building and sharing links.
+  *   **TikTok:** Casual, fun, and video-oriented. The visual idea should be for a short video.
 
-### Phase 2: Analyze Post Performance
-If a specific post text (postText) and its analytics data (likes, comments, etc.) are provided, your primary task is to analyze that one post for one platform.
-1. Use the provided post text as the content to analyze.
-2. Summarize the post's engagement in a clear, professional way.
-3. Highlight key metrics: likes, comments, shares, clicks, impressions/reach.
-4. Provide recommendations for improving future posts based on the performance of this specific post.
-5. In this case, you should return a single conceptual post in the 'posts' array. The 'platform_posts' object will contain only one entry for the specified platform, which includes the original text and the new analytics fields.
+  **Input for Generation:**
+  *   **Organization:** {{{organizationName}}}
+  *   **Topics/Keywords:** {{#each topics}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  *   **Platforms:** {{#each platforms}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+  *   **Number of Posts:** {{{numberOfPosts}}}
+  *   **Tone:** {{{tone}}}
+  *   **Language:** {{{language}}}
 
-### Input:
-- Organization name: {{{organizationName}}}
-- Platforms: {{#each platforms}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
-- Tone: {{{tone}}}
-- Language: {{{language}}}
-{{#if postText}}
-- Post to Analyze: {{{postText}}}
-{{else}}
-- Topics/keywords: {{#each topics}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
-- Number of posts: {{{numberOfPosts}}}
-{{/if}}
-{{#if likes}}
-- Analytics Data:
-  - Likes: {{{likes}}}
-  - Comments: {{{comments}}}
-  - Shares: {{{shares}}}
-  - Clicks: {{{clicks}}}
-  - Impressions/Reach: {{{impressions}}}
-  - Date posted: {{{date_posted}}}
-{{/if}}
-
-Please follow the rules and output the JSON format.
-- If analytics data and postText are provided, perform Phase 2 for that specific post.
-- Otherwise, perform Phase 1 and generate {{numberOfPosts}} new post concepts for {{organizationName}} across all specified platforms.
+  Based on these inputs, generate the content in the required JSON format.
 `,
 });
 
@@ -128,6 +106,41 @@ const generateSocialMediaPostsFlow = ai.defineFlow(
     outputSchema: GenerateSocialMediaPostsOutputSchema,
   },
   async input => {
+    // If analytics data is present, handle the analysis task (not shown in this simplified prompt)
+    if (input.postText && input.likes !== undefined) {
+      // For now, we focus on generation. A more complex implementation would handle this.
+      // You could call a different prompt for analysis here.
+      const analysisPrompt = ai.definePrompt({
+          name: 'analyzeSocialMediaPostPrompt',
+          input: {schema: GenerateSocialMediaPostsInputSchema},
+          output: {schema: GenerateSocialMediaPostsOutputSchema},
+          prompt: `You are a social media analytics expert. Analyze the performance of the following post.
+
+          **Post to Analyze:**
+          - Platform: {{#each platforms}}{{{this}}}{{/each}}
+          - Text: {{{postText}}}
+
+          **Analytics Data:**
+          - Likes: {{{likes}}}
+          - Comments: {{{comments}}}
+          - Shares: {{{shares}}}
+          - Clicks: {{{clicks}}}
+          - Impressions/Reach: {{{impressions}}}
+          - Date Posted: {{{date_posted}}}
+
+          **Your Task:**
+          1.  Summarize the post's engagement.
+          2.  Highlight the most important metrics.
+          3.  Provide recommendations for future posts.
+          4.  Return the output in the specified JSON format, with a single post in the 'posts' array containing the analysis.
+          `
+        });
+      const {output} = await analysisPrompt(input);
+      return output!;
+
+    }
+
+    // Default to post generation
     const {output} = await prompt(input);
     return output!;
   }
