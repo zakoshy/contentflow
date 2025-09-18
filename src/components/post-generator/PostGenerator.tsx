@@ -39,7 +39,7 @@ export function PostGenerator() {
     defaultValues: {
       organizationName: '',
       topics: '',
-      platforms: ['X'],
+      platforms: [],
       numberOfPosts: 3,
       tone: 'Official',
       language: 'English',
