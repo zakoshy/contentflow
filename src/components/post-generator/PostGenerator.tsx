@@ -48,7 +48,6 @@ export function PostGenerator() {
 
   const onSubmit = (data: FormSchema) => {
     const formData = new FormData();
-    // Use `data` from `handleSubmit` which has the correct values
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'platforms' && Array.isArray(value)) {
         value.forEach(platform => formData.append('platforms', platform));
@@ -112,7 +111,7 @@ export function PostGenerator() {
                       <FormControl>
                         <Textarea placeholder="e.g., AI, Machine Learning, SaaS" {...field} />
                       </FormControl>
-                      <FormDescription>Comma-separated list of topics.</FormDescription>
+                      <FormDescription>Describe the content you want to generate.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -129,7 +128,7 @@ export function PostGenerator() {
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select a tone" />
-                            </SelectTrigger>
+                            </Trigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="Official">Official</SelectItem>
@@ -151,7 +150,7 @@ export function PostGenerator() {
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select a language" />
-                            </SelectTrigger>
+                            </Trigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="English">English</SelectItem>
@@ -239,7 +238,6 @@ export function PostGenerator() {
                     </FormItem>
                   )}
                 />
-
               </form>
             </Form>
           </CardContent>

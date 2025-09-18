@@ -36,13 +36,7 @@ export async function generatePostsAction(
       };
     }
 
-    const { topics, ...rest } = validatedFields.data;
-    const topicsArray = topics.split(',').map(t => t.trim());
-
-    const input: GenerateSocialMediaPostsInput = {
-      ...rest,
-      topics: topicsArray,
-    };
+    const input: GenerateSocialMediaPostsInput = validatedFields.data;
     
     const result = await generateSocialMediaPosts(input);
 
