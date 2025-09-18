@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -45,7 +44,7 @@ export function PostGenerator() {
     },
   });
 
-  const onSubmit = async (data: FormSchema) => {
+  async function handleFormSubmit(data: FormSchema) {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'platforms' && Array.isArray(value)) {
@@ -74,8 +73,7 @@ export function PostGenerator() {
          setShowResults(true);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState]);
+  }, [formState, isPending, toast]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -87,7 +85,7 @@ export function PostGenerator() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8">
                 <FormField
                   control={form.control}
                   name="organizationName"
