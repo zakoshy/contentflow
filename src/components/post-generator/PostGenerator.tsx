@@ -7,7 +7,15 @@ import { generatePostsAction, type FormState } from '@/app/actions';
 import { formSchema, type FormSchema } from '@/lib/schema';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
@@ -40,15 +48,23 @@ export function PostGenerator() {
 
   const onSubmit = (data: FormSchema) => {
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
-        formData.append(key, String(value));
-      }
+
+    // Append required fields
+    formData.append('organizationName', data.organizationName);
+    formData.append('topics', data.topics);
+    formData.append('numberOfPosts', String(data.numberOfPosts));
+    formData.append('tone', data.tone);
+    formData.append('language', data.language);
+
+    // Append all platforms (since checkboxes are gone)
+    allPlatforms.forEach((platform) => {
+      formData.append('platforms', platform);
     });
 
     startTransition(async () => {
       setShowResults(false);
-      const result = await generatePostsAction(formState, formData);
+      // ✅ Pass only the formData to the server action
+      const result = await generatePostsAction(formData);
       setFormState(result);
     });
   };
@@ -73,11 +89,14 @@ export function PostGenerator() {
         <Card className="sticky top-24">
           <CardHeader>
             <CardTitle>Create New Posts</CardTitle>
-            <CardDescription>Fill in the details below to generate social media posts using AI.</CardDescription>
+            <CardDescription>
+              Fill in the details below to generate social media posts using AI.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                {/* Company name */}
                 <FormField
                   control={form.control}
                   name="organizationName"
@@ -92,6 +111,7 @@ export function PostGenerator() {
                   )}
                 />
 
+                {/* Topics */}
                 <FormField
                   control={form.control}
                   name="topics"
@@ -101,12 +121,15 @@ export function PostGenerator() {
                       <FormControl>
                         <Textarea placeholder="e.g., AI, Machine Learning, SaaS" {...field} />
                       </FormControl>
-                      <FormDescription>Describe the content you want to generate.</FormDescription>
+                      <FormDescription>
+                        Describe the content you want to generate.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
+                {/* Tone + Language */}
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -154,6 +177,7 @@ export function PostGenerator() {
                   />
                 </div>
 
+                {/* Number of posts */}
                 <FormField
                   control={form.control}
                   name="numberOfPosts"
@@ -174,6 +198,27 @@ export function PostGenerator() {
                   )}
                 />
 
+                {/* Platforms preview (no checkbox functionality) */}
+                <div className="space-y-4">
+                  <FormLabel>Platforms</FormLabel>
+                  <FormDescription>
+                    Content will be generated for all platforms.
+                  </FormDescription>
+                  <div className="flex flex-wrap gap-4">
+                    {allPlatforms.map((platform) => (
+                      <Badge
+                        key={platform}
+                        variant="outline"
+                        className="flex items-center gap-2 py-1 px-3"
+                      >
+                        <SocialIcon platform={platform} className="h-4 w-4" />
+                        <span>{platform}</span>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Submit */}
                 <Button
                   type="submit"
                   className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
@@ -182,27 +227,13 @@ export function PostGenerator() {
                   {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Generate Posts
                 </Button>
-
-                <div className="space-y-4">
-                  <FormLabel>Platforms</FormLabel>
-                  <FormDescription>
-                    Content will be generated for all platforms.
-                  </FormDescription>
-                  <div className="flex flex-wrap gap-4">
-                    {allPlatforms.map((platform) => (
-                      <Badge key={platform} variant="outline" className="flex items-center gap-2 py-1 px-3">
-                        <SocialIcon platform={platform} className="h-4 w-4" />
-                        <span>{platform}</span>
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
               </form>
             </Form>
           </CardContent>
         </Card>
       </div>
 
+      {/* Right side: Results */}
       <div className="lg:col-span-2">
         {isPending ? (
           <div className="flex flex-col items-center justify-center h-full min-h-[60vh] rounded-lg border border-dashed shadow-sm bg-card">

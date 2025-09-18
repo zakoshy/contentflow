@@ -5,7 +5,7 @@ import {
   type GenerateSocialMediaPostsInput,
   type GenerateSocialMediaPostsOutput,
 } from '@/ai/flows/generate-social-media-posts';
-import { formSchema } from '@/lib/schema';
+import { formSchema, type FormSchema } from '@/lib/schema';
 
 export interface FormState {
   message: string;
@@ -15,16 +15,10 @@ export interface FormState {
 
 export async function generatePostsAction(
   prevState: FormState,
-  formData: FormData
+  data: FormSchema
 ): Promise<FormState> {
   try {
-    const validatedFields = formSchema.safeParse({
-      organizationName: formData.get('organizationName'),
-      topics: formData.get('topics'),
-      numberOfPosts: formData.get('numberOfPosts'),
-      tone: formData.get('tone'),
-      language: formData.get('language'),
-    });
+    const validatedFields = formSchema.safeParse(data);
 
     if (!validatedFields.success) {
       const issues = validatedFields.error.flatten().fieldErrors;
