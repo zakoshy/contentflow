@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
@@ -65,7 +64,7 @@ export function PostGenerator() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState, isPending]);
   
-  const onSubmit = form.handleSubmit((data) => {
+  const onSubmit = (data: FormSchema) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'platforms' && Array.isArray(value)) {
@@ -78,7 +77,7 @@ export function PostGenerator() {
       setShowResults(false);
       formAction(formData);
     });
-  });
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -90,7 +89,7 @@ export function PostGenerator() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={onSubmit} className="space-y-8">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                   control={form.control}
                   name="organizationName"
