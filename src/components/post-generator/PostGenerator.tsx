@@ -47,24 +47,9 @@ export function PostGenerator() {
   });
 
   const onSubmit = (data: FormSchema) => {
-    const formData = new FormData();
-
-    // Append required fields
-    formData.append('organizationName', data.organizationName);
-    formData.append('topics', data.topics);
-    formData.append('numberOfPosts', String(data.numberOfPosts));
-    formData.append('tone', data.tone);
-    formData.append('language', data.language);
-
-    // Append all platforms (since checkboxes are gone)
-    allPlatforms.forEach((platform) => {
-      formData.append('platforms', platform);
-    });
-
     startTransition(async () => {
       setShowResults(false);
-      // ✅ Pass only the formData to the server action
-      const result = await generatePostsAction(formData);
+      const result = await generatePostsAction(formState, data);
       setFormState(result);
     });
   };
