@@ -1,8 +1,7 @@
 
 'use client';
 
-import React, { useEffect, useState, useTransition } from 'react';
-import { useActionState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generatePostsAction, type FormState } from '@/app/actions';
@@ -28,13 +27,9 @@ const platformOptions = [
   { value: 'TikTok', label: 'TikTok', icon: <SocialIcon platform="TikTok" className="h-5 w-5" /> },
 ] as const;
 
-const initialState: FormState = {
-  message: '',
-};
-
 export function PostGenerator() {
-  const [formState, formAction] = useActionState(generatePostsAction, initialState);
-  const [isPending, startTransition] = useTransition();
+  const [formState, setFormState] = useState<FormState>({ message: '' });
+  const [isPending, setIsPending] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
 
@@ -50,6 +45,23 @@ export function PostGenerator() {
     },
   });
 
+  const onSubmit = async (data: FormSchema) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === 'platforms' && Array.isArray(value)) {
+        value.forEach(platform => formData.append('platforms', platform));
+      } else if (value !== undefined && value !== '') {
+        formData.append(key, String(value));
+      }
+    });
+
+    setIsPending(true);
+    setShowResults(false);
+    const result = await generatePostsAction(formState, formData);
+    setFormState(result);
+    setIsPending(false);
+  };
+  
   useEffect(() => {
     if (formState.message && !isPending) {
       if (formState.error) {
@@ -64,21 +76,6 @@ export function PostGenerator() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState, isPending]);
-
-  function onSubmit(data: FormSchema) {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === 'platforms' && Array.isArray(value)) {
-        value.forEach(platform => formData.append('platforms', platform));
-      } else if (value !== undefined && value !== '') {
-        formData.append(key, String(value));
-      }
-    });
-    startTransition(() => {
-      setShowResults(false);
-      formAction(formData);
-    });
-  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
