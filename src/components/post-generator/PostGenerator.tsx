@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useState, useTransition } from 'react';
@@ -119,130 +120,128 @@ export function PostGenerator() {
                   )}
                 />
 
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="tone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Tone</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a tone" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="Casual">Casual</SelectItem>
-                              <SelectItem value="Official">Official</SelectItem>
-                              <SelectItem value="Fun">Fun</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="language"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Language</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a language" />
-                              </Trigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="English">English</SelectItem>
-                              <SelectItem value="Swahili">Swahili</SelectItem>
-                              <SelectItem value="Sheng">Sheng</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                <FormField
+                  control={form.control}
+                  name="platforms"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Social Media Platforms</FormLabel>
+                        <FormDescription>
+                          Select one or more platforms to generate posts for.
+                        </FormDescription>
+                      </div>
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                      {platformOptions.map((option) => (
+                        <FormField
+                          key={option.value}
+                          control={form.control}
+                          name="platforms"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={option.value}
+                                className="flex flex-row items-start space-x-3 space-y-0"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(option.value)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...(field.value ?? []), option.value])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) => value !== option.value
+                                            )
+                                          )
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal flex items-center gap-2 cursor-pointer">
+                                  {option.icon} {option.label}
+                                </FormLabel>
+                              </FormItem>
+                            )
+                          }}
+                        />
+                      ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                  <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
-                    {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    Generate Posts
-                  </Button>
-
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="platforms"
-                    render={() => (
+                    name="tone"
+                    render={({ field }) => (
                       <FormItem>
-                        <div className="mb-4">
-                          <FormLabel className="text-base">Social Media Platforms</FormLabel>
-                          <FormDescription>
-                            Select one or more platforms to generate posts for.
-                          </FormDescription>
-                        </div>
-                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        {platformOptions.map((option) => (
-                          <FormField
-                            key={option.value}
-                            control={form.control}
-                            name="platforms"
-                            render={({ field }) => {
-                              return (
-                                <FormItem
-                                  key={option.value}
-                                  className="flex flex-row items-start space-x-3 space-y-0"
-                                >
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(option.value)}
-                                      onCheckedChange={(checked) => {
-                                        return checked
-                                          ? field.onChange([...(field.value ?? []), option.value])
-                                          : field.onChange(
-                                              field.value?.filter(
-                                                (value) => value !== option.value
-                                              )
-                                            )
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal flex items-center gap-2 cursor-pointer">
-                                    {option.icon} {option.label}
-                                  </FormLabel>
-                                </FormItem>
-                              )
-                            }}
-                          />
-                        ))}
-                        </div>
+                        <FormLabel>Tone</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a tone" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Casual">Casual</SelectItem>
+                            <SelectItem value="Official">Official</SelectItem>
+                            <SelectItem value="Fun">Fun</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="numberOfPosts"
-                    render={({ field: { onChange, value } }) => (
+                    name="language"
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Number of Posts (per platform) ({value})</FormLabel>
-                        <FormControl>
-                          <Slider
-                            min={1}
-                            max={5}
-                            step={1}
-                            value={[value]}
-                            onValueChange={(vals) => onChange(vals[0])}
-                          />
-                        </FormControl>
+                        <FormLabel>Language</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a language" />
+                            </Trigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="English">English</SelectItem>
+                            <SelectItem value="Swahili">Swahili</SelectItem>
+                            <SelectItem value="Sheng">Sheng</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
+                
+                <FormField
+                  control={form.control}
+                  name="numberOfPosts"
+                  render={({ field: { onChange, value } }) => (
+                    <FormItem>
+                      <FormLabel>Number of Posts (per platform) ({value})</FormLabel>
+                      <FormControl>
+                        <Slider
+                          min={1}
+                          max={5}
+                          step={1}
+                          value={[value ?? 3]}
+                          onValueChange={(vals) => onChange(vals[0])}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
+                  {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  Generate Posts
+                </Button>
               </form>
             </Form>
           </CardContent>
