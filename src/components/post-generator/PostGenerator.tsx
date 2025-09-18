@@ -15,8 +15,11 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { PostResults } from './PostResults';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SocialIcon } from './SocialIcon';
+import { Badge } from '../ui/badge';
 
 const initialFormState: FormState = { message: '' };
+const allPlatforms = ['X', 'LinkedIn', 'Instagram', 'Facebook', 'TikTok'] as const;
 
 export function PostGenerator() {
   const [formState, setFormState] = useState<FormState>(initialFormState);
@@ -179,6 +182,21 @@ export function PostGenerator() {
                   {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Generate Posts
                 </Button>
+
+                <div className="space-y-4">
+                  <FormLabel>Platforms</FormLabel>
+                  <FormDescription>
+                    Content will be generated for all platforms.
+                  </FormDescription>
+                  <div className="flex flex-wrap gap-4">
+                    {allPlatforms.map((platform) => (
+                      <Badge key={platform} variant="outline" className="flex items-center gap-2 py-1 px-3">
+                        <SocialIcon platform={platform} className="h-4 w-4" />
+                        <span>{platform}</span>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               </form>
             </Form>
           </CardContent>
