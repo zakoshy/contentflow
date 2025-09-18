@@ -12,9 +12,10 @@ import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { uploadImage } from '@/app/cloudinary-actions';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 interface PostResultsProps {
-  data?: GenerateSocialMediaPostsOutput[];
+  data?: GenerateSocialMediaPostsOutput;
 }
 
 const SendToSocialMediaButton = ({ postText, imageUrl }: { postText: string; imageUrl?: string }) => {
@@ -160,7 +161,7 @@ export function PostResults({ data }: PostResultsProps) {
     setImages(prev => ({...prev, [postIdentifier]: imageUrl}));
   };
 
-  if (!data) {
+  if (!data || !data.posts || data.posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-[60vh] rounded-lg border border-dashed shadow-sm bg-card">
         <div className="text-center space-y-4 p-8">
@@ -180,7 +181,7 @@ export function PostResults({ data }: PostResultsProps) {
     link.click();
   };
   
-  const defaultActiveItems = data.map(result => result.platform);
+  const defaultActiveItems = data.posts.map(post => post.post_id);
 
   return (
     <Card className="animate-in fade-in duration-500">
@@ -188,7 +189,7 @@ export function PostResults({ data }: PostResultsProps) {
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
             <CardTitle className="flex items-center gap-2">
-              Generated Content
+              Generated Content for {data.organization}
             </CardTitle>
             <CardDescription>
               Here are the posts generated for the selected platforms.
@@ -202,38 +203,49 @@ export function PostResults({ data }: PostResultsProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         <Accordion type="multiple" defaultValue={defaultActiveItems} className="w-full space-y-4">
-          {data.map((result, resultIndex) => (
-            <AccordionItem value={result.platform} key={result.platform}>
+          {data.posts.map((postConcept, conceptIndex) => (
+            <AccordionItem value={postConcept.post_id} key={postConcept.post_id}>
               <AccordionTrigger className='p-4 bg-muted rounded-md'>
                 <div className='flex items-center gap-2 text-lg font-semibold'>
-                  <SocialIcon platform={result.platform as any} />
-                  Posts for {result.organization} on {result.platform} ({result.posts.length})
+                  Post Concept {conceptIndex + 1}
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pt-4 space-y-4">
-                {result.posts.map((post, postIndex) => {
-                  const postIdentifier = `${result.platform}-${resultIndex}-${postIndex}`;
-                  return (
-                    <Card key={postIdentifier} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
-                      <div className="grid grid-cols-1 md:grid-cols-3">
-                        <div className="md:col-span-2 p-6 flex flex-col">
-                          <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {post.hashtags.map((tag) => (
-                              <Badge key={tag} variant="secondary">
-                                {tag}
-                              </Badge>
-                            ))}
+                <Tabs defaultValue={Object.keys(postConcept.platform_posts)[0]} className="w-full">
+                  <TabsList className="grid w-full grid-cols-5">
+                    {Object.keys(postConcept.platform_posts).map(platform => (
+                      <TabsTrigger key={platform} value={platform} className="flex items-center gap-2">
+                        <SocialIcon platform={platform as any} />
+                        {platform}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  {Object.entries(postConcept.platform_posts).map(([platform, post]) => {
+                    const postIdentifier = `${postConcept.post_id}-${platform}`;
+                    return (
+                    <TabsContent key={platform} value={platform}>
+                      <Card className="overflow-hidden shadow-md transition-shadow hover:shadow-lg mt-2">
+                        <div className="grid grid-cols-1 md:grid-cols-3">
+                          <div className="md:col-span-2 p-6 flex flex-col">
+                            <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {post.hashtags.map((tag) => (
+                                <Badge key={tag} variant="secondary">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                            <SendToSocialMediaButton postText={post.text} imageUrl={images[postIdentifier] ?? undefined} />
                           </div>
-                          <SendToSocialMediaButton postText={post.text} imageUrl={images[postIdentifier] ?? undefined} />
+                          <ImageUploader 
+                              onImageReady={(imageUrl) => handleImageReady(postIdentifier, imageUrl)}
+                          />
                         </div>
-                        <ImageUploader 
-                            onImageReady={(imageUrl) => handleImageReady(postIdentifier, imageUrl)}
-                        />
-                      </div>
-                    </Card>
-                  );
-                })}
+                      </Card>
+                    </TabsContent>
+                    )
+                  })}
+                </Tabs>
               </AccordionContent>
             </AccordionItem>
           ))}

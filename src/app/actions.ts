@@ -9,7 +9,7 @@ import { formSchema } from '@/lib/schema';
 
 export interface FormState {
   message: string;
-  data?: GenerateSocialMediaPostsOutput[];
+  data?: GenerateSocialMediaPostsOutput;
   error?: boolean;
 }
 
@@ -36,23 +36,19 @@ export async function generatePostsAction(
       };
     }
 
-    const { platforms, ...commonInput } = validatedFields.data;
-    const topics = commonInput.topics.split(',').map(t => t.trim());
+    const { topics, ...rest } = validatedFields.data;
+    const topicsArray = topics.split(',').map(t => t.trim());
 
-    const results = await Promise.all(
-      platforms.map(platform => {
-        const input: GenerateSocialMediaPostsInput = {
-          ...commonInput,
-          topics,
-          platform,
-        };
-        return generateSocialMediaPosts(input);
-      })
-    );
+    const input: GenerateSocialMediaPostsInput = {
+      ...rest,
+      topics: topicsArray,
+    };
+    
+    const result = await generateSocialMediaPosts(input);
 
     return {
       message: 'Posts generated successfully.',
-      data: results,
+      data: result,
     };
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';

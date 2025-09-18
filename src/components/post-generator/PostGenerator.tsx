@@ -169,7 +169,7 @@ export function PostGenerator() {
                   name="numberOfPosts"
                   render={({ field: { onChange, value } }) => (
                     <FormItem>
-                      <FormLabel>Number of Posts (per platform) ({value})</FormLabel>
+                      <FormLabel>Number of Posts ({value})</FormLabel>
                       <FormControl>
                         <Slider
                           min={1}
