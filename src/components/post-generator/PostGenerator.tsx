@@ -140,7 +140,7 @@ export function PostGenerator() {
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select a language" />
-                            </SelectTrigger>
+                            </Trigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="English">English</SelectItem>

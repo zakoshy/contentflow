@@ -1,13 +1,5 @@
 'use server';
 
-/**
- * @fileOverview A social media post generation and analytics AI agent.
- *
- * - generateSocialMediaPosts - A function that generates social media posts.
- * - GenerateSocialMediaPostsInput - The input type for the generateSocialMediaPosts function.
- * - GenerateSocialMediaPostsOutput - The return type for the generateSocialMediaPosts function.
- */
-
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
@@ -32,22 +24,6 @@ const GenerateSocialMediaPostsInputSchema = z.object({
   language: z
     .enum(['English', 'Swahili', 'Sheng'])
     .describe('The desired language for the posts.'),
-  postText: z
-    .string()
-    .optional()
-    .describe('The text of a specific post to be analyzed.'),
-  likes: z.number().optional().describe('Number of likes for analytics.'),
-  comments: z.number().optional().describe('Number of comments for analytics.'),
-  shares: z.number().optional().describe('Number of shares for analytics.'),
-  clicks: z.number().optional().describe('Number of clicks for analytics.'),
-  impressions: z
-    .number()
-    .optional()
-    .describe('Number of impressions/reach for analytics.'),
-  date_posted: z
-    .string()
-    .optional()
-    .describe('Date the post was made for analytics.'),
 });
 export type GenerateSocialMediaPostsInput = z.infer<
   typeof GenerateSocialMediaPostsInputSchema
@@ -145,40 +121,6 @@ const generateSocialMediaPostsFlow = ai.defineFlow(
     outputSchema: GenerateSocialMediaPostsOutputSchema,
   },
   async (input) => {
-    // If analytics data is present, handle the analysis task (not shown in this simplified prompt)
-    if (input.postText && input.likes !== undefined) {
-      // For now, we focus on generation. A more complex implementation would handle this.
-      // You could call a different prompt for analysis here.
-      const analysisPrompt = ai.definePrompt({
-        name: 'analyzeSocialMediaPostPrompt',
-        input: {schema: GenerateSocialMediaPostsInputSchema},
-        output: {schema: GenerateSocialMediaPostsOutputSchema},
-        prompt: `You are a social media analytics expert. Analyze the performance of the following post.
-
-          **Post to Analyze:**
-          - Platform: {{#each platforms}}{{{this}}}{{/each}}
-          - Text: {{{postText}}}
-
-          **Analytics Data:**
-          - Likes: {{{likes}}}
-          - Comments: {{{comments}}}
-          - Shares: {{{shares}}}
-          - Clicks: {{{clicks}}}
-          - Impressions/Reach: {{{impressions}}}
-          - Date Posted: {{{date_posted}}}
-
-          **Your Task:**
-          1.  Summarize the post's engagement.
-          2.  Highlight the most important metrics.
-          3.  Provide recommendations for future posts.
-          4.  Return the output in the specified JSON format, with a single post in the 'posts' array containing the analysis.
-          `,
-      });
-      const {output} = await analysisPrompt(input);
-      return output!;
-    }
-
-    // Default to post generation
     const {output} = await prompt(input);
     return output!;
   }
