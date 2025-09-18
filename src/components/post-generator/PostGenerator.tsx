@@ -41,7 +41,7 @@ export function PostGenerator() {
       topics: '',
       platforms: ['X'],
       numberOfPosts: 3,
-      tone: 'Casual',
+      tone: 'Official',
       language: 'English',
     },
   });
@@ -129,39 +129,38 @@ export function PostGenerator() {
                         </FormDescription>
                       </div>
                       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                      {platformOptions.map((option) => (
-                        <FormField
-                          key={option.value}
-                          control={form.control}
-                          name="platforms"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={option.value}
-                                className="flex flex-row items-start space-x-3 space-y-0"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(option.value)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...(field.value ?? []), option.value])
-                                        : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== option.value
+                        {platformOptions.map((option) => (
+                          <FormField
+                            key={option.value}
+                            control={form.control}
+                            name="platforms"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(option.value)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...(field.value ?? []), option.value])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== option.value
+                                              )
                                             )
-                                          )
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="font-normal flex items-center gap-2 cursor-pointer">
-                                  {option.icon} {option.label}
-                                </FormLabel>
-                              </FormItem>
-                            )
-                          }}
-                        />
-                      ))}
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal flex items-center gap-2 cursor-pointer">
+                                    {option.icon} {option.label}
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
                       </div>
                       <FormMessage />
                     </FormItem>
@@ -175,15 +174,15 @@ export function PostGenerator() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Tone</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select a tone" />
-                            </Trigger>
+                            </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Casual">Casual</SelectItem>
                             <SelectItem value="Official">Official</SelectItem>
+                            <SelectItem value="Casual">Casual</SelectItem>
                             <SelectItem value="Fun">Fun</SelectItem>
                           </SelectContent>
                         </Select>
@@ -197,11 +196,11 @@ export function PostGenerator() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Language</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select a language" />
-                            </Trigger>
+                            </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="English">English</SelectItem>
@@ -214,7 +213,7 @@ export function PostGenerator() {
                     )}
                   />
                 </div>
-                
+
                 <FormField
                   control={form.control}
                   name="numberOfPosts"
@@ -234,7 +233,7 @@ export function PostGenerator() {
                     </FormItem>
                   )}
                 />
-                
+
                 <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
                   {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Generate Posts
@@ -251,7 +250,7 @@ export function PostGenerator() {
             <div className="text-center space-y-4 p-8">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
               <h3 className="text-xl font-semibold">Generating your posts...</h3>
-              <p className="text-muted-foreground">The AI is working its magic. This may take a moment.</p>
+              <p className="text-muted-foreground">The AI is generating content. This may take a moment.</p>
             </div>
           </div>
         ) : (
