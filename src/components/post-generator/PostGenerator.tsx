@@ -116,57 +116,7 @@ export function PostGenerator() {
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="platforms"
-                  render={() => (
-                    <FormItem>
-                      <div className="mb-4">
-                        <FormLabel className="text-base">Social Media Platforms</FormLabel>
-                        <FormDescription>
-                          Select one or more platforms to generate posts for.
-                        </FormDescription>
-                      </div>
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        {platformOptions.map((option) => (
-                          <FormField
-                            key={option.value}
-                            control={form.control}
-                            name="platforms"
-                            render={({ field }) => {
-                              return (
-                                <FormItem
-                                  className="flex flex-row items-start space-x-3 space-y-0"
-                                >
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(option.value)}
-                                      onCheckedChange={(checked) => {
-                                        return checked
-                                          ? field.onChange([...(field.value ?? []), option.value])
-                                          : field.onChange(
-                                              field.value?.filter(
-                                                (value) => value !== option.value
-                                              )
-                                            )
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal flex items-center gap-2 cursor-pointer">
-                                    {option.icon} {option.label}
-                                  </FormLabel>
-                                </FormItem>
-                              )
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
+                
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -238,6 +188,57 @@ export function PostGenerator() {
                   {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Generate Posts
                 </Button>
+
+                <FormField
+                  control={form.control}
+                  name="platforms"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Social Media Platforms</FormLabel>
+                        <FormDescription>
+                          Select one or more platforms to generate posts for.
+                        </FormDescription>
+                      </div>
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                        {platformOptions.map((option) => (
+                          <FormField
+                            key={option.value}
+                            control={form.control}
+                            name="platforms"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(option.value)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...(field.value ?? []), option.value])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== option.value
+                                              )
+                                            )
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal flex items-center gap-2 cursor-pointer">
+                                    {option.icon} {option.label}
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
               </form>
             </Form>
           </CardContent>
