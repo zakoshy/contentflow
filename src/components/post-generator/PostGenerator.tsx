@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generatePostsAction, type FormState } from '@/app/actions';
@@ -26,9 +26,11 @@ const platformOptions = [
   { value: 'TikTok', label: 'TikTok', icon: <SocialIcon platform="TikTok" className="h-5 w-5" /> },
 ] as const;
 
+const initialFormState: FormState = { message: '' };
+
 export function PostGenerator() {
-  const [formState, setFormState] = useState<FormState>({ message: '' });
-  const [isPending, setIsPending] = useState(false);
+  const [formState, setFormState] = useState<FormState>(initialFormState);
+  const [isPending, startTransition] = useTransition();
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
 
@@ -44,7 +46,7 @@ export function PostGenerator() {
     },
   });
 
-  async function handleFormSubmit(data: FormSchema) {
+  const onSubmit = (data: FormSchema) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'platforms' && Array.isArray(value)) {
@@ -54,11 +56,11 @@ export function PostGenerator() {
       }
     });
 
-    setIsPending(true);
-    setShowResults(false);
-    const result = await generatePostsAction(formState, formData);
-    setFormState(result);
-    setIsPending(false);
+    startTransition(async () => {
+      setShowResults(false);
+      const result = await generatePostsAction(formState, formData);
+      setFormState(result);
+    });
   };
   
   useEffect(() => {
@@ -69,7 +71,7 @@ export function PostGenerator() {
           title: 'Error generating posts',
           description: formState.message,
         });
-      } else {
+      } else if (formState.data) {
          setShowResults(true);
       }
     }
@@ -85,7 +87,7 @@ export function PostGenerator() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                   control={form.control}
                   name="organizationName"
