@@ -45,7 +45,7 @@ export function PostGenerator() {
       topics: '',
       platforms: ['X'],
       numberOfPosts: 3,
-      tone: 'Casual',
+      tone: 'Official',
       language: 'English',
     },
   });
@@ -135,8 +135,8 @@ export function PostGenerator() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="Casual">Casual</SelectItem>
                               <SelectItem value="Official">Official</SelectItem>
+                              <SelectItem value="Casual">Casual</SelectItem>
                               <SelectItem value="Fun">Fun</SelectItem>
                             </SelectContent>
                           </Select>
@@ -154,7 +154,7 @@ export function PostGenerator() {
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select a language" />
-                              </SelectTrigger>
+                              </Trigger>
                             </FormControl>
                             <SelectContent>
                               <SelectItem value="English">English</SelectItem>
