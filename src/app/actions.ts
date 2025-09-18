@@ -21,7 +21,7 @@ export async function generatePostsAction(
     const validatedFields = formSchema.safeParse({
       organizationName: formData.get('organizationName'),
       topics: formData.get('topics'),
-      platforms: formData.getAll('platforms'),
+      platforms: formData.getAll('platforms'), // Correctly get all platform values
       numberOfPosts: formData.get('numberOfPosts'),
       tone: formData.get('tone'),
       language: formData.get('language'),
