@@ -62,7 +62,7 @@ export function PostGenerator() {
       setFormState(result);
     });
   };
-  
+
   useEffect(() => {
     if (formState.message && !isPending) {
       if (formState.error) {
@@ -72,7 +72,7 @@ export function PostGenerator() {
           description: formState.message,
         });
       } else if (formState.data) {
-         setShowResults(true);
+        setShowResults(true);
       }
     }
   }, [formState, isPending, toast]);
