@@ -11,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
@@ -19,6 +18,7 @@ import { Loader2, Linkedin, Instagram, Facebook } from 'lucide-react';
 import { PostResults } from './PostResults';
 import { SocialIcon } from './SocialIcon';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '../ui/checkbox';
 
 const platformOptions = [
   { value: 'X', label: 'Twitter', icon: <SocialIcon platform="X" className="h-5 w-5" /> },
@@ -43,7 +43,7 @@ export function PostGenerator() {
     defaultValues: {
       organizationName: '',
       topics: '',
-      platform: 'X',
+      platforms: ['X'],
       numberOfPosts: 3,
       tone: 'Casual',
       language: 'English',
@@ -68,7 +68,9 @@ export function PostGenerator() {
   const onSubmit = form.handleSubmit((data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== '') {
+      if (key === 'platforms' && Array.isArray(value)) {
+        value.forEach(platform => formData.append('platforms', platform));
+      } else if (value !== undefined && value !== '') {
         formData.append(key, String(value));
       }
     });
@@ -173,32 +175,50 @@ export function PostGenerator() {
 
                   <FormField
                     control={form.control}
-                    name="platform"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormLabel>Social Media Platform</FormLabel>
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="grid grid-cols-2 lg:grid-cols-3 gap-4"
-                          >
-                            {platformOptions.map((option) => (
-                              <FormItem key={option.value} className="flex items-center space-x-2">
-                                <FormControl>
-                                  <RadioGroupItem value={option.value} id={option.value} className="peer sr-only" />
-                                </FormControl>
-                                <Label
-                                  htmlFor={option.value}
-                                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary w-full cursor-pointer"
+                    name="platforms"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel className="text-base">Social Media Platforms</FormLabel>
+                          <FormDescription>
+                            Select one or more platforms to generate posts for.
+                          </FormDescription>
+                        </div>
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                        {platformOptions.map((option) => (
+                          <FormField
+                            key={option.value}
+                            control={form.control}
+                            name="platforms"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={option.value}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
                                 >
-                                  {option.icon}
-                                  {option.label}
-                                </Label>
-                              </FormItem>
-                            ))}
-                          </RadioGroup>
-                        </FormControl>
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(option.value)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...(field.value ?? []), option.value])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== option.value
+                                              )
+                                            )
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal flex items-center gap-2 cursor-pointer">
+                                    {option.icon} {option.label}
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -209,7 +229,7 @@ export function PostGenerator() {
                     name="numberOfPosts"
                     render={({ field: { onChange, value } }) => (
                       <FormItem>
-                        <FormLabel>Number of Posts ({value})</FormLabel>
+                        <FormLabel>Number of Posts (per platform) ({value})</FormLabel>
                         <FormControl>
                           <Slider
                             min={1}

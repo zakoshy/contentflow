@@ -11,9 +11,10 @@ import { sendToBuffer } from '@/app/buffer-actions';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { uploadImage } from '@/app/cloudinary-actions';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 interface PostResultsProps {
-  data?: GenerateSocialMediaPostsOutput;
+  data?: GenerateSocialMediaPostsOutput[];
 }
 
 const SendToSocialMediaButton = ({ postText, imageUrl }: { postText: string; imageUrl?: string }) => {
@@ -55,7 +56,7 @@ const ImageUploader = ({ onImageReady }: { onImageReady: (imageUrl: string | nul
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -153,10 +154,10 @@ const ImageUploader = ({ onImageReady }: { onImageReady: (imageUrl: string | nul
 };
 
 export function PostResults({ data }: PostResultsProps) {
-  const [images, setImages] = useState<Record<number, string | null>>({});
+  const [images, setImages] = useState<Record<string, string | null>>({});
 
-  const handleImageReady = (index: number, imageUrl: string | null) => {
-    setImages(prev => ({...prev, [index]: imageUrl}));
+  const handleImageReady = (postIdentifier: string, imageUrl: string | null) => {
+    setImages(prev => ({...prev, [postIdentifier]: imageUrl}));
   };
 
   if (!data) {
@@ -175,9 +176,11 @@ export function PostResults({ data }: PostResultsProps) {
     const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`;
     const link = document.createElement('a');
     link.href = jsonString;
-    link.download = `contentflow-ai-output-${data.organization}.json`;
+    link.download = `contentflow-ai-output.json`;
     link.click();
   };
+  
+  const defaultActiveItems = data.map(result => result.platform);
 
   return (
     <Card className="animate-in fade-in duration-500">
@@ -185,11 +188,10 @@ export function PostResults({ data }: PostResultsProps) {
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <SocialIcon platform={data.platform as any} />
-              Generated Posts for {data.organization}
+              Generated Content
             </CardTitle>
             <CardDescription>
-              Here are the {data.posts.length} posts generated for {data.platform}.
+              Here are the posts generated for the selected platforms.
             </CardDescription>
           </div>
           <Button variant="outline" onClick={handleDownload}>
@@ -199,28 +201,43 @@ export function PostResults({ data }: PostResultsProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {data.posts.map((post, index) => {
-          return (
-            <Card key={index} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
-              <div className="grid grid-cols-1 md:grid-cols-3">
-                <div className="md:col-span-2 p-6 flex flex-col">
-                  <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {post.hashtags.map((tag) => (
-                      <Badge key={tag} variant="secondary">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <SendToSocialMediaButton postText={post.text} imageUrl={images[index] ?? undefined} />
+        <Accordion type="multiple" defaultValue={defaultActiveItems} className="w-full space-y-4">
+          {data.map((result, resultIndex) => (
+            <AccordionItem value={result.platform} key={result.platform}>
+              <AccordionTrigger className='p-4 bg-muted rounded-md'>
+                <div className='flex items-center gap-2 text-lg font-semibold'>
+                  <SocialIcon platform={result.platform as any} />
+                  Posts for {result.organization} on {result.platform} ({result.posts.length})
                 </div>
-                <ImageUploader 
-                    onImageReady={(imageUrl) => handleImageReady(index, imageUrl)}
-                />
-              </div>
-            </Card>
-          );
-        })}
+              </AccordionTrigger>
+              <AccordionContent className="pt-4 space-y-4">
+                {result.posts.map((post, postIndex) => {
+                  const postIdentifier = `${result.platform}-${resultIndex}-${postIndex}`;
+                  return (
+                    <Card key={postIdentifier} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
+                      <div className="grid grid-cols-1 md:grid-cols-3">
+                        <div className="md:col-span-2 p-6 flex flex-col">
+                          <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {post.hashtags.map((tag) => (
+                              <Badge key={tag} variant="secondary">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                          <SendToSocialMediaButton postText={post.text} imageUrl={images[postIdentifier] ?? undefined} />
+                        </div>
+                        <ImageUploader 
+                            onImageReady={(imageUrl) => handleImageReady(postIdentifier, imageUrl)}
+                        />
+                      </div>
+                    </Card>
+                  );
+                })}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </CardContent>
     </Card>
   );

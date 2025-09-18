@@ -9,7 +9,7 @@ import { formSchema } from '@/lib/schema';
 
 export interface FormState {
   message: string;
-  data?: GenerateSocialMediaPostsOutput;
+  data?: GenerateSocialMediaPostsOutput[];
   error?: boolean;
 }
 
@@ -21,7 +21,7 @@ export async function generatePostsAction(
     const validatedFields = formSchema.safeParse({
       organizationName: formData.get('organizationName'),
       topics: formData.get('topics'),
-      platform: formData.get('platform'),
+      platforms: formData.getAll('platforms'),
       numberOfPosts: formData.get('numberOfPosts'),
       tone: formData.get('tone'),
       language: formData.get('language'),
@@ -36,16 +36,23 @@ export async function generatePostsAction(
       };
     }
 
-    const input: GenerateSocialMediaPostsInput = {
-      ...validatedFields.data,
-      topics: validatedFields.data.topics.split(',').map(t => t.trim()),
-    };
+    const { platforms, ...commonInput } = validatedFields.data;
+    const topics = commonInput.topics.split(',').map(t => t.trim());
 
-    const result = await generateSocialMediaPosts(input);
+    const results = await Promise.all(
+      platforms.map(platform => {
+        const input: GenerateSocialMediaPostsInput = {
+          ...commonInput,
+          topics,
+          platform,
+        };
+        return generateSocialMediaPosts(input);
+      })
+    );
 
     return {
       message: 'Posts generated successfully.',
-      data: result,
+      data: results,
     };
   } catch (e) {
     const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
