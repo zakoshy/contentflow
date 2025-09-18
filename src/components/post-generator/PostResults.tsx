@@ -5,14 +5,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download, BotMessageSquare, Send, Loader2, Image as ImageIcon, Upload } from 'lucide-react';
-import { SocialIcon } from './SocialIcon';
 import React, { useState, useTransition, useRef } from 'react';
 import { sendToBuffer } from '@/app/buffer-actions';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { uploadImage } from '@/app/cloudinary-actions';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 interface PostResultsProps {
   data?: GenerateSocialMediaPostsOutput;
@@ -180,8 +177,6 @@ export function PostResults({ data }: PostResultsProps) {
     link.download = `contentflow-ai-output.json`;
     link.click();
   };
-  
-  const defaultActiveItems = data.posts.map(post => post.post_id);
 
   return (
     <Card className="animate-in fade-in duration-500">
@@ -192,7 +187,7 @@ export function PostResults({ data }: PostResultsProps) {
               Generated Content for {data.organization}
             </CardTitle>
             <CardDescription>
-              Here are the posts generated for the selected platforms.
+              Here are the posts generated. You can upload an image for each post.
             </CardDescription>
           </div>
           <Button variant="outline" onClick={handleDownload}>
@@ -202,54 +197,29 @@ export function PostResults({ data }: PostResultsProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Accordion type="multiple" defaultValue={defaultActiveItems} className="w-full space-y-4">
-          {data.posts.map((postConcept, conceptIndex) => (
-            <AccordionItem value={postConcept.post_id} key={postConcept.post_id}>
-              <AccordionTrigger className='p-4 bg-muted rounded-md'>
-                <div className='flex items-center gap-2 text-lg font-semibold'>
-                  Post Concept {conceptIndex + 1}
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pt-4 space-y-4">
-                <Tabs defaultValue={Object.keys(postConcept.platform_posts)[0]} className="w-full">
-                  <TabsList className="grid w-full grid-cols-5">
-                    {Object.keys(postConcept.platform_posts).map(platform => (
-                      <TabsTrigger key={platform} value={platform} className="flex items-center gap-2">
-                        <SocialIcon platform={platform as any} />
-                        {platform}
-                      </TabsTrigger>
+        {data.posts.map((post) => {
+          const postIdentifier = post.post_id;
+          return (
+            <Card key={postIdentifier} className="overflow-hidden shadow-md transition-shadow hover:shadow-lg">
+              <div className="grid grid-cols-1 md:grid-cols-3">
+                <div className="md:col-span-2 p-6 flex flex-col">
+                  <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {post.hashtags.map((tag) => (
+                      <Badge key={tag} variant="secondary">
+                        {tag}
+                      </Badge>
                     ))}
-                  </TabsList>
-                  {Object.entries(postConcept.platform_posts).map(([platform, post]) => {
-                    const postIdentifier = `${postConcept.post_id}-${platform}`;
-                    return (
-                    <TabsContent key={platform} value={platform}>
-                      <Card className="overflow-hidden shadow-md transition-shadow hover:shadow-lg mt-2">
-                        <div className="grid grid-cols-1 md:grid-cols-3">
-                          <div className="md:col-span-2 p-6 flex flex-col">
-                            <p className="text-foreground mb-4 whitespace-pre-wrap flex-grow">{post.text}</p>
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              {post.hashtags.map((tag) => (
-                                <Badge key={tag} variant="secondary">
-                                  {tag}
-                                </Badge>
-                              ))}
-                            </div>
-                            <SendToSocialMediaButton postText={post.text} imageUrl={images[postIdentifier] ?? undefined} />
-                          </div>
-                          <ImageUploader 
-                              onImageReady={(imageUrl) => handleImageReady(postIdentifier, imageUrl)}
-                          />
-                        </div>
-                      </Card>
-                    </TabsContent>
-                    )
-                  })}
-                </Tabs>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+                  </div>
+                  <SendToSocialMediaButton postText={post.text} imageUrl={images[postIdentifier] ?? undefined} />
+                </div>
+                <ImageUploader
+                  onImageReady={(imageUrl) => handleImageReady(postIdentifier, imageUrl)}
+                />
+              </div>
+            </Card>
+          );
+        })}
       </CardContent>
     </Card>
   );

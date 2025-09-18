@@ -25,12 +25,13 @@ import { PostResults } from './PostResults';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SocialIcon } from './SocialIcon';
 import { Badge } from '../ui/badge';
+import { useFormState } from 'react-dom';
 
 const initialFormState: FormState = { message: '' };
 const allPlatforms = ['X', 'LinkedIn', 'Instagram', 'Facebook', 'TikTok'] as const;
 
 export function PostGenerator() {
-  const [formState, setFormState] = useState<FormState>(initialFormState);
+  const [formState, formAction] = useFormState(generatePostsAction, initialFormState);
   const [isPending, startTransition] = useTransition();
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
@@ -47,10 +48,16 @@ export function PostGenerator() {
   });
 
   const onSubmit = (data: FormSchema) => {
-    startTransition(async () => {
+    const formData = new FormData();
+    formData.append('organizationName', data.organizationName);
+    formData.append('topics', data.topics);
+    formData.append('numberOfPosts', String(data.numberOfPosts));
+    formData.append('tone', data.tone);
+    formData.append('language', data.language);
+
+    startTransition(() => {
       setShowResults(false);
-      const result = await generatePostsAction(formState, data);
-      setFormState(result);
+      formAction(formData);
     });
   };
 
@@ -81,7 +88,7 @@ export function PostGenerator() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                {/* Company name */}
+                {/* Organization Name */}
                 <FormField
                   control={form.control}
                   name="organizationName"
@@ -107,7 +114,7 @@ export function PostGenerator() {
                         <Textarea placeholder="e.g., AI, Machine Learning, SaaS" {...field} />
                       </FormControl>
                       <FormDescription>
-                        Describe the content you want to generate.
+                        Enter keywords or topics you want content about.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -138,6 +145,7 @@ export function PostGenerator() {
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
                     name="language"
@@ -183,11 +191,11 @@ export function PostGenerator() {
                   )}
                 />
 
-                {/* Platforms preview (no checkbox functionality) */}
+                {/* Platforms just visible */}
                 <div className="space-y-4">
                   <FormLabel>Platforms</FormLabel>
                   <FormDescription>
-                    Content will be generated for all platforms.
+                    Posts will be suitable for all platforms.
                   </FormDescription>
                   <div className="flex flex-wrap gap-4">
                     {allPlatforms.map((platform) => (
@@ -203,7 +211,7 @@ export function PostGenerator() {
                   </div>
                 </div>
 
-                {/* Submit */}
+                {/* Submit button */}
                 <Button
                   type="submit"
                   className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
@@ -218,7 +226,7 @@ export function PostGenerator() {
         </Card>
       </div>
 
-      {/* Right side: Results */}
+      {/* Right panel: Results */}
       <div className="lg:col-span-2">
         {isPending ? (
           <div className="flex flex-col items-center justify-center h-full min-h-[60vh] rounded-lg border border-dashed shadow-sm bg-card">

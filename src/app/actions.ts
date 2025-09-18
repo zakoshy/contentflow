@@ -1,4 +1,3 @@
-
 'use server';
 
 import {
@@ -16,10 +15,16 @@ export interface FormState {
 
 export async function generatePostsAction(
   prevState: FormState,
-  data: FormSchema
+  formData: FormData
 ): Promise<FormState> {
   try {
-    const validatedFields = formSchema.safeParse(data);
+    const validatedFields = formSchema.safeParse({
+      organizationName: formData.get('organizationName'),
+      topics: formData.get('topics'),
+      numberOfPosts: formData.get('numberOfPosts'),
+      tone: formData.get('tone'),
+      language: formData.get('language'),
+    });
 
     if (!validatedFields.success) {
       const issues = validatedFields.error.flatten().fieldErrors;
@@ -30,13 +35,14 @@ export async function generatePostsAction(
       };
     }
 
-    const allPlatforms: GenerateSocialMediaPostsInput['platforms'] = ['X', 'LinkedIn', 'Instagram', 'Facebook', 'TikTok'];
-
     const input: GenerateSocialMediaPostsInput = {
-      ...validatedFields.data,
-      platforms: allPlatforms,
+      organizationName: validatedFields.data.organizationName,
+      topics: validatedFields.data.topics,
+      numberOfPosts: validatedFields.data.numberOfPosts,
+      tone: validatedFields.data.tone,
+      language: validatedFields.data.language,
     };
-    
+
     const result = await generateSocialMediaPosts(input);
 
     return {
@@ -44,7 +50,8 @@ export async function generatePostsAction(
       data: result,
     };
   } catch (e) {
-    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
+    const errorMessage =
+      e instanceof Error ? e.message : 'An unknown error occurred.';
     return {
       message: `An error occurred: ${errorMessage}`,
       error: true,
