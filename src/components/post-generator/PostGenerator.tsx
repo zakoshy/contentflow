@@ -12,19 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Linkedin, Instagram, Facebook } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { PostResults } from './PostResults';
-import { SocialIcon } from './SocialIcon';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '../ui/checkbox';
-
-const platformOptions = [
-  { value: 'X', label: 'Twitter', icon: <SocialIcon platform="X" className="h-5 w-5" /> },
-  { value: 'LinkedIn', label: 'LinkedIn', icon: <Linkedin className="h-5 w-5" /> },
-  { value: 'Instagram', label: 'Instagram', icon: <Instagram className="h-5 w-5" /> },
-  { value: 'Facebook', label: 'Facebook', icon: <Facebook className="h-5 w-5" /> },
-  { value: 'TikTok', label: 'TikTok', icon: <SocialIcon platform="TikTok" className="h-5 w-5" /> },
-] as const;
 
 const initialFormState: FormState = { message: '' };
 
@@ -39,7 +29,6 @@ export function PostGenerator() {
     defaultValues: {
       organizationName: '',
       topics: '',
-      platforms: [],
       numberOfPosts: 3,
       tone: 'Official',
       language: 'English',
@@ -49,9 +38,7 @@ export function PostGenerator() {
   const onSubmit = (data: FormSchema) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      if (key === 'platforms' && Array.isArray(value)) {
-        value.forEach(platform => formData.append('platforms', platform));
-      } else if (value !== undefined && value !== null && value !== '') {
+      if (value !== undefined && value !== null && value !== '') {
         formData.append(key, String(value));
       }
     });
@@ -116,7 +103,7 @@ export function PostGenerator() {
                     </FormItem>
                   )}
                 />
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -128,7 +115,7 @@ export function PostGenerator() {
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select a tone" />
-                            </Trigger>
+                            </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="Official">Official</SelectItem>
@@ -150,7 +137,7 @@ export function PostGenerator() {
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select a language" />
-                            </Trigger>
+                            </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="English">English</SelectItem>
@@ -184,60 +171,14 @@ export function PostGenerator() {
                   )}
                 />
 
-                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90" disabled={isPending}>
+                <Button
+                  type="submit"
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  disabled={isPending}
+                >
                   {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Generate Posts
                 </Button>
-
-                <FormField
-                  control={form.control}
-                  name="platforms"
-                  render={() => (
-                    <FormItem>
-                      <div className="mb-4">
-                        <FormLabel className="text-base">Social Media Platforms</FormLabel>
-                        <FormDescription>
-                          Select one or more platforms to generate posts for.
-                        </FormDescription>
-                      </div>
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        {platformOptions.map((option) => (
-                          <FormField
-                            key={option.value}
-                            control={form.control}
-                            name="platforms"
-                            render={({ field }) => {
-                              return (
-                                <FormItem
-                                  className="flex flex-row items-start space-x-3 space-y-0"
-                                >
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(option.value)}
-                                      onCheckedChange={(checked) => {
-                                        return checked
-                                          ? field.onChange([...(field.value ?? []), option.value])
-                                          : field.onChange(
-                                              field.value?.filter(
-                                                (value) => value !== option.value
-                                              )
-                                            )
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal flex items-center gap-2 cursor-pointer">
-                                    {option.icon} {option.label}
-                                  </FormLabel>
-                                </FormItem>
-                              )
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </form>
             </Form>
           </CardContent>
@@ -250,7 +191,9 @@ export function PostGenerator() {
             <div className="text-center space-y-4 p-8">
               <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
               <h3 className="text-xl font-semibold">Generating your posts...</h3>
-              <p className="text-muted-foreground">The AI is generating content. This may take a moment.</p>
+              <p className="text-muted-foreground">
+                The AI is generating content. This may take a moment.
+              </p>
             </div>
           </div>
         ) : (

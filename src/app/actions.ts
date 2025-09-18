@@ -21,7 +21,6 @@ export async function generatePostsAction(
     const validatedFields = formSchema.safeParse({
       organizationName: formData.get('organizationName'),
       topics: formData.get('topics'),
-      platforms: formData.getAll('platforms'), // Correctly get all platform values
       numberOfPosts: formData.get('numberOfPosts'),
       tone: formData.get('tone'),
       language: formData.get('language'),
@@ -36,7 +35,12 @@ export async function generatePostsAction(
       };
     }
 
-    const input: GenerateSocialMediaPostsInput = validatedFields.data;
+    const allPlatforms: GenerateSocialMediaPostsInput['platforms'] = ['X', 'LinkedIn', 'Instagram', 'Facebook', 'TikTok'];
+
+    const input: GenerateSocialMediaPostsInput = {
+      ...validatedFields.data,
+      platforms: allPlatforms,
+    };
     
     const result = await generateSocialMediaPosts(input);
 
