@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useTransition } from 'react';
+import React, { useEffect, useState, useTransition, useActionState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { generatePostsAction, type FormState } from '@/app/actions';
@@ -25,13 +25,12 @@ import { PostResults } from './PostResults';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SocialIcon } from './SocialIcon';
 import { Badge } from '../ui/badge';
-import { useFormState } from 'react-dom';
 
 const initialFormState: FormState = { message: '' };
 const allPlatforms = ['X', 'LinkedIn', 'Instagram', 'Facebook', 'TikTok'] as const;
 
 export function PostGenerator() {
-  const [formState, formAction] = useFormState(generatePostsAction, initialFormState);
+  const [formState, formAction] = useActionState(generatePostsAction, initialFormState);
   const [isPending, startTransition] = useTransition();
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
