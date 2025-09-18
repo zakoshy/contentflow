@@ -64,7 +64,7 @@ export function PostGenerator() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState, isPending]);
   
-  const onSubmit = (data: FormSchema) => {
+  function onSubmit(data: FormSchema) {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'platforms' && Array.isArray(value)) {
