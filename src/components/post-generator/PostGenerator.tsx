@@ -75,7 +75,7 @@ export function PostGenerator() {
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formState, isPending]);
+  }, [formState]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
