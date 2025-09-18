@@ -65,6 +65,11 @@ const prompt = ai.definePrompt({
   name: 'generateSocialMediaPostsPrompt',
   input: {schema: GenerateSocialMediaPostsInputSchema},
   output: {schema: GenerateSocialMediaPostsOutputSchema},
+  config: {
+    response: {
+        format: 'json',
+    }
+  },
   prompt: `You are a social media content creation and analytics agent. Your primary task is to generate social media posts based on the provided inputs.
 
   **Instructions for Post Generation:**
@@ -114,6 +119,11 @@ const generateSocialMediaPostsFlow = ai.defineFlow(
           name: 'analyzeSocialMediaPostPrompt',
           input: {schema: GenerateSocialMediaPostsInputSchema},
           output: {schema: GenerateSocialMediaPostsOutputSchema},
+          config: {
+            response: {
+                format: 'json',
+            }
+          },
           prompt: `You are a social media analytics expert. Analyze the performance of the following post.
 
           **Post to Analyze:**
