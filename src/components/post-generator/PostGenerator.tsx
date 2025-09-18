@@ -77,7 +77,7 @@ export function PostGenerator() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form onSubmit={form. handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                   control={form.control}
                   name="organizationName"
