@@ -7,7 +7,7 @@ export const formSchema = z.object({
     message: 'You must select at least one social media platform.',
   }),
   numberOfPosts: z.coerce.number().int().min(1).max(5),
-  tone: z.enum(['Official', 'Casual', 'Fun']),
+  tone: z.enum(['Casual', 'Official', 'Fun']),
   language: z.enum(['English', 'Swahili', 'Sheng']),
 });
 

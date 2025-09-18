@@ -44,7 +44,7 @@ export function PostGenerator() {
       topics: '',
       platforms: ['X'],
       numberOfPosts: 3,
-      tone: 'Official',
+      tone: 'Casual',
       language: 'English',
     },
   });
@@ -63,7 +63,7 @@ export function PostGenerator() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formState, isPending]);
-  
+
   function onSubmit(data: FormSchema) {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
@@ -77,7 +77,7 @@ export function PostGenerator() {
       setShowResults(false);
       formAction(formData);
     });
-  };
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
@@ -134,8 +134,8 @@ export function PostGenerator() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="Official">Official</SelectItem>
                               <SelectItem value="Casual">Casual</SelectItem>
+                              <SelectItem value="Official">Official</SelectItem>
                               <SelectItem value="Fun">Fun</SelectItem>
                             </SelectContent>
                           </Select>
