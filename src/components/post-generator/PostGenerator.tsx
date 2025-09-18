@@ -48,10 +48,11 @@ export function PostGenerator() {
 
   const onSubmit = (data: FormSchema) => {
     const formData = new FormData();
+    // Use `data` from `handleSubmit` which has the correct values
     Object.entries(data).forEach(([key, value]) => {
       if (key === 'platforms' && Array.isArray(value)) {
         value.forEach(platform => formData.append('platforms', platform));
-      } else if (value !== undefined && value !== '') {
+      } else if (value !== undefined && value !== null && value !== '') {
         formData.append(key, String(value));
       }
     });
